@@ -2,8 +2,13 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Claim;
+use App\Models\Policy;
+use App\Models\Product;
+use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Carbon;
 
 class StatsOverview extends BaseWidget
 {
@@ -11,24 +16,37 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
+        $labels = collect(range(6, 0))->map(fn(int $daysAgo) => now()->subDays($daysAgo)->startOfDay());
+
+        $usersChart = $labels->map(fn(Carbon $date) => User::whereDate('created_at', $date)->count())->all();
+        $productsChart = $labels->map(fn(Carbon $date) => Product::where('is_active', true)->whereDate('created_at', $date)->count())->all();
+        $policiesChart = $labels->map(fn(Carbon $date) => Policy::where('status', 'pending')->whereDate('created_at', $date)->count())->all();
+        $claimsChart = $labels->map(fn(Carbon $date) => Claim::whereIn('status', ['pending', 'review'])->whereDate('created_at', $date)->count())->all();
+
         return [
-            Stat::make('Total Users', '0')
+            Stat::make('Total Users', number_format(User::count()))
                 ->description('Pengguna terdaftar')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary')
-                ->chart([7, 3, 4, 5, 6, 3, 5]),
+                ->chart($usersChart),
 
-            Stat::make('Total Posts', '0')
-                ->description('Postingan aktif')
-                ->descriptionIcon('heroicon-m-document-text')
+            Stat::make('Produk Asuransi Aktif', number_format(Product::where('is_active', true)->count()))
+                ->description('Produk tersedia')
+                ->descriptionIcon('heroicon-m-archive-box')
                 ->color('success')
-                ->chart([3, 2, 4, 3, 5, 4, 6]),
+                ->chart($productsChart),
 
-            Stat::make('Total Orders', '0')
-                ->description('Pesanan baru')
-                ->descriptionIcon('heroicon-m-shopping-cart')
+            Stat::make('Polis Pending', number_format(Policy::where('status', 'pending')->count()))
+                ->description('Menunggu persetujuan')
+                ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
-                ->chart([5, 4, 3, 6, 5, 4, 7]),
+                ->chart($policiesChart),
+
+            Stat::make('Klaim Pending', number_format(Claim::whereIn('status', ['pending', 'review'])->count()))
+                ->description('Perlu verifikasi')
+                ->descriptionIcon('heroicon-m-shield-check')
+                ->color('danger')
+                ->chart($claimsChart),
         ];
     }
 }
