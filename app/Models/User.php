@@ -234,4 +234,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return self::whereIn('id', $userIds)->get();
     }
 
+    public function policies()
+        {
+            return $this->hasMany(Policy::class);
+        }
+
+        public function claims()
+        {
+            return $this->hasMany(Claim::class);
+        }
+
 }
