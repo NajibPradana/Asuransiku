@@ -32,7 +32,7 @@ class NasabahAuthController extends Controller
             ]);
         }
 
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        if (! Auth::guard('nasabah')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             RateLimiter::hit($throttleKey, 60);
 
             throw ValidationException::withMessages([
@@ -44,9 +44,9 @@ class NasabahAuthController extends Controller
 
         $request->session()->regenerate();
 
-        $user = $request->user();
+        $user = Auth::guard('nasabah')->user();
         if (! $user || ! $user->hasRole('nasabah')) {
-            Auth::logout();
+            Auth::guard('nasabah')->logout();
 
             return back()->withErrors([
                 'email' => 'Akun ini tidak memiliki akses nasabah.',
@@ -58,7 +58,7 @@ class NasabahAuthController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
+        Auth::guard('nasabah')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

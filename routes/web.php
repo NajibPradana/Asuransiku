@@ -49,20 +49,18 @@ Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'
 
 Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/login', [\App\Http\Controllers\NasabahAuthController::class, 'showLogin'])
-        ->middleware('guest')
+        ->middleware('guest:nasabah')
         ->name('login');
     Route::post('/login', [\App\Http\Controllers\NasabahAuthController::class, 'login'])
-        ->middleware('guest')
+        ->middleware('guest:nasabah')
         ->name('login.submit');
     Route::post('/logout', [\App\Http\Controllers\NasabahAuthController::class, 'logout'])
-        ->middleware('auth')
+        ->middleware('auth:nasabah')
         ->name('logout');
 
-    Route::get('/', function () {
-        return view('frontend.nasabah.dashboard', [
-            'pageTitle' => 'Nasabah Dashboard',
-        ]);
-    })->middleware(['nasabah'])->name('dashboard');
+    Route::get('/', [\App\Http\Controllers\NasabahDashboardController::class, 'index'])
+        ->middleware(['nasabah'])
+        ->name('dashboard');
 });
 
 
