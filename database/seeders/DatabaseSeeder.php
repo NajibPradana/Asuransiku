@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             SuperadminSeeder::class,
             UsersTableSeeder::class,
             ProductsTableSeeder::class,
+            PoliciesTableSeeder::class,
         ]);
     }
 }
