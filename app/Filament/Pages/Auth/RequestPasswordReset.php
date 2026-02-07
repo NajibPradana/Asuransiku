@@ -77,7 +77,7 @@ class RequestPasswordReset extends BaseRequestPasswordReset
                     /** @var \App\Models\User $user */
                     // $user = Filament::auth()->user();
 
-                    if ($user->hasRole('customer') && $user->roles->count() === 1) {
+                    if ($user->hasRole('nasabah') && $user->roles->count() === 1) {
 
                         throw new Exception("We can't find a user with that email address.");
                     }

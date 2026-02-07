@@ -42,7 +42,12 @@ class RolesAndPermissionsSeeder extends Seeder
             );
         }
 
-        $roles = ["super_admin", "admin", "operator"]; // author
+        $roles = [
+            "super_admin",
+            "admin",
+            "manager",
+            "nasabah",
+        ];
 
         foreach ($roles as $role) {
             $roleCreated = Role::updateOrCreate(

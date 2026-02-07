@@ -302,7 +302,7 @@ class BookingOrderApprovalService
                         }
                     }
                 } else {
-                    // For other roles (like customer), just check if role matches
+                    // For other roles (like nasabah), just check if role matches
                     return true;
                 }
             }
