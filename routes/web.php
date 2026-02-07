@@ -61,6 +61,37 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/', [\App\Http\Controllers\NasabahDashboardController::class, 'index'])
         ->middleware(['nasabah'])
         ->name('dashboard');
+
+    // Product page for nasabah
+    Route::get('/products', [\App\Http\Controllers\Nasabah\ProductController::class, 'index'])
+        ->middleware(['nasabah'])
+        ->name('products');
+
+    // Profile page for nasabah
+    Route::get('/profile', [\App\Http\Controllers\Nasabah\ProfileController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('profile');
+
+    // Policy routes
+    Route::get('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'overview'])
+        ->middleware(['nasabah'])
+        ->name('policies');
+
+    Route::get('/policies/active', [\App\Http\Controllers\Nasabah\PolicyController::class, 'index'])
+        ->middleware(['nasabah'])
+        ->name('policies.index');
+
+    Route::get('/policies/pending', [\App\Http\Controllers\Nasabah\PolicyController::class, 'pending'])
+        ->middleware(['nasabah'])
+        ->name('policies.pending');
+
+    // Allow guests to view the application form for testing; submission still requires auth.
+    Route::get('/policies/apply', [\App\Http\Controllers\Nasabah\PolicyController::class, 'create'])
+        ->name('policies.create');
+
+    Route::post('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'store'])
+        ->middleware(['nasabah'])
+        ->name('policies.store');
 });
 
 

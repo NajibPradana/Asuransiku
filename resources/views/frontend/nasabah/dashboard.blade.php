@@ -1,6 +1,6 @@
-@extends('frontend.layout-guest')
+@extends('frontend.layout-nasabah')
 
-@section('content')
+@section('nasabah-content')
 @php
     $user = auth('nasabah')->user();
     $displayName = trim(($user->firstname ?? '') . ' ' . ($user->lastname ?? '')) ?: 'Nasabah';
@@ -66,14 +66,8 @@
         <div class="absolute top-24 -left-16 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl nasabah-float" style="animation-delay: 2s;"></div>
 
         <div class="container mx-auto px-6 py-12 lg:py-16">
-            <div class="flex items-center justify-between">
+            <div>
                 <div class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Area Nasabah</div>
-                <form method="POST" action="{{ route('nasabah.logout') }}">
-                    @csrf
-                    <button type="submit" class="rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-xs font-semibold text-slate-700">
-                        Logout
-                    </button>
-                </form>
             </div>
             <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                 <div class="nasabah-reveal">
@@ -88,23 +82,27 @@
                         Semua kebutuhan perlindungan Anda terkonsolidasi dalam satu halaman. Cek status klaim, unduh dokumen, dan akses layanan prioritas kapan pun Anda perlu.
                     </p>
                     <div class="mt-8 flex flex-wrap gap-3">
-                        <a href="#" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20">Ajukan Klaim</a>
+                        <a href="{{ route('nasabah.policies.create') }}" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20">Ajukan Klaim</a>
                         <a href="#" class="rounded-full border border-slate-900/10 bg-white px-6 py-3 text-sm font-semibold text-slate-900">Unduh Kartu Polis</a>
                     </div>
 
                     <div class="mt-10 grid gap-4 sm:grid-cols-2">
-                        <div class="nasabah-card relative overflow-hidden rounded-2xl p-5">
+                        <a href="{{ route('nasabah.policies') }}" class="nasabah-card relative overflow-hidden rounded-2xl p-5 transition hover:shadow-lg">
                             <div class="absolute inset-0 nasabah-sheen opacity-60"></div>
                             <p class="text-sm font-semibold uppercase text-slate-500">Polis Aktif</p>
-                            <p class="mt-3 text-3xl font-semibold">3</p>
-                            <p class="mt-2 text-sm text-slate-500">Perpanjangan berikutnya: 12 Mar 2026</p>
-                        </div>
-                        <div class="nasabah-card relative overflow-hidden rounded-2xl p-5">
+                            <p class="mt-3 text-3xl font-semibold">{{ $activePoliciesCount }}</p>
+                            @if($nextRenewalDate)
+                                <p class="mt-2 text-sm text-slate-500">Perpanjangan berikutnya: {{ $nextRenewalDate->format('d M Y') }}</p>
+                            @else
+                                <p class="mt-2 text-sm text-slate-500">Belum ada polis aktif</p>
+                            @endif
+                        </a>
+                        <a href="{{ route('nasabah.policies') }}" class="nasabah-card relative overflow-hidden rounded-2xl p-5 transition hover:shadow-lg">
                             <div class="absolute inset-0 nasabah-sheen opacity-60"></div>
-                            <p class="text-sm font-semibold uppercase text-slate-500">Klaim Berjalan</p>
-                            <p class="mt-3 text-3xl font-semibold">1</p>
-                            <p class="mt-2 text-sm text-slate-500">Rata-rata SLA: 3 hari kerja</p>
-                        </div>
+                            <p class="text-sm font-semibold uppercase text-slate-500">Pengajuan Menunggu</p>
+                            <p class="mt-3 text-3xl font-semibold">{{ $pendingPoliciesCount }}</p>
+                            <p class="mt-2 text-sm text-slate-500">Sedang dalam review manager</p>
+                        </a>
                     </div>
                 </div>
 
@@ -151,44 +149,52 @@
             <div class="mt-12">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Produk Tersedia</p>
-                        <h2 class="mt-2 text-2xl font-semibold text-slate-900">Pilih perlindungan sesuai kebutuhan</h2>
+                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Polis Aktif Anda</p>
+                        <h2 class="mt-2 text-2xl font-semibold text-slate-900">Kelola perlindungan yang sedang berjalan</h2>
                     </div>
                     <span class="hidden rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-slate-700 sm:inline-flex">
-                        {{ $products->count() }} Produk Aktif
+                        {{ $activePoliciesCount }} Polis Aktif
                     </span>
                 </div>
 
-                <div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    @forelse($products as $product)
-                        <div class="nasabah-card rounded-3xl p-6">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-slate-900">{{ $product->name }}</h3>
-                                    <p class="mt-2 text-sm text-slate-500 line-clamp-3">
-                                        {{ $product->description ?? 'Produk ini memberikan perlindungan menyeluruh untuk kebutuhan Anda.' }}
-                                    </p>
+                <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    @forelse($activePolicies as $policy)
+                        <div class="nasabah-card rounded-3xl p-6 transition hover:shadow-md hover:-translate-y-1">
+                            <div class="flex items-start justify-between mb-1">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h3 class="text-base font-semibold text-slate-900">{{ $policy->product->name }}</h3>
+                                    </div>
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="inline-block rounded-full bg-blue-100/70 px-2.5 py-1 text-xs font-semibold text-blue-700 border border-blue-200">{{ ucfirst($policy->product->category) }}</span>
+                                        <p class="text-xs font-medium text-slate-500">{{ $policy->policy_number }}</p>
+                                    </div>
                                 </div>
-                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Aktif</span>
+                                <span class="rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700 whitespace-nowrap ml-2">Aktif</span>
                             </div>
-                            <div class="mt-6 grid gap-3">
-                                <div class="flex items-center justify-between text-sm text-slate-600">
-                                    <span>Premi Dasar</span>
-                                    <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->base_premium, 0, ',', '.') }}</span>
+                            <hr class="my-4 border-slate-100" />
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Periode</span>
+                                    <span class="text-sm font-semibold text-slate-900">{{ $policy->start_date->format('d M Y') }} - {{ $policy->end_date->format('d M Y') }}</span>
                                 </div>
-                                <div class="flex items-center justify-between text-sm text-slate-600">
-                                    <span>Coverage</span>
-                                    <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->coverage_amount, 0, ',', '.') }}</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Premi</span>
+                                    <span class="text-sm font-semibold text-slate-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Coverage</span>
+                                    <span class="text-sm font-semibold text-slate-900">Rp{{ number_format((float) ($policy->product->coverage_amount ?? 0), 0, ',', '.') }}</span>
                                 </div>
                             </div>
-                            <div class="mt-6 flex items-center justify-between">
-                                <a href="#" class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Lihat Detail</a>
-                                <button class="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white">Ajukan</button>
+                            <div class="mt-6 flex gap-2">
+                                <a href="{{ route('nasabah.policies') }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 text-center hover:bg-slate-50 transition">Detail</a>
+                                <button class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition">Ajukan Klaim</button>
                             </div>
                         </div>
                     @empty
-                        <div class="nasabah-card rounded-3xl p-6 md:col-span-2 xl:col-span-3">
-                            <p class="text-sm text-slate-600">Belum ada produk aktif yang bisa ditampilkan.</p>
+                        <div class="nasabah-card rounded-3xl p-8 md:col-span-2 lg:col-span-3 text-center">
+                            <p class="text-sm text-slate-600">Belum ada polis aktif. <a href="{{ route('nasabah.policies.create') }}" class="font-semibold text-slate-900 hover:underline">Ajukan polis sekarang</a></p>
                         </div>
                     @endforelse
                 </div>
