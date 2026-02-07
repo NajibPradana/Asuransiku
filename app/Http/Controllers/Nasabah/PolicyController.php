@@ -65,9 +65,11 @@ class PolicyController extends Controller
      */
     public function create()
     {
+        $user = auth('nasabah')->user();
+        $profile = $user?->nasabahProfile;
         $products = Product::where('is_active', true)->get();
 
-        return view('frontend.nasabah.apply-policy', compact('products'));
+        return view('frontend.nasabah.apply-policy', compact('products', 'user', 'profile'));
     }
 
     /**
@@ -79,7 +81,7 @@ class PolicyController extends Controller
             'category' => ['required', 'string'],
             'product_id' => ['required', 'exists:products,id'],
             'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'premium_paid' => ['required', 'numeric', 'min:0'],
         ]);
 
@@ -87,13 +89,16 @@ class PolicyController extends Controller
 
         // Remove category from data as it's only for validation/filtering
         $data = collect($validated)->except('category')->toArray();
+        $data['end_date'] = $data['start_date']
+            ? \Illuminate\Support\Carbon::parse($data['start_date'])->addYear()->toDateString()
+            : $data['end_date'];
 
         $policy = Policy::create(array_merge($data, [
             'user_id' => $userId,
             'status' => 'pending',
         ]));
 
-        return redirect()->route('nasabah.dashboard')
+        return redirect()->route('nasabah.policies')
             ->with('success', 'Pengajuan polis berhasil dikirim menunggu persetujuan manager.')
             ->with('show_sweet_alert', true);
     }

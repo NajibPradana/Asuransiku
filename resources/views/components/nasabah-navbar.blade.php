@@ -20,6 +20,9 @@
                 <a href="{{ route('nasabah.policies') }}" class="text-slate-700 hover:text-slate-900 font-medium transition {{ request()->routeIs('nasabah.policies*') ? 'text-slate-900 border-b-2 border-slate-900' : '' }}">
                     Polis
                 </a>
+                <a href="{{ route('nasabah.claims') }}" class="text-slate-700 hover:text-slate-900 font-medium transition {{ request()->routeIs('nasabah.claims*') ? 'text-slate-900 border-b-2 border-slate-900' : '' }}">
+                    Klaim
+                </a>
                 <a href="{{ route('nasabah.profile') }}" class="text-slate-700 hover:text-slate-900 font-medium transition {{ request()->routeIs('nasabah.profile') ? 'text-slate-900 border-b-2 border-slate-900' : '' }}">
                     Profil
                 </a>
@@ -46,6 +49,7 @@
                         <li><a href="{{ route('nasabah.dashboard') }}">Home</a></li>
                         <li><a href="{{ route('nasabah.products') }}">Produk</a></li>
                         <li><a href="{{ route('nasabah.policies') }}">Polis</a></li>
+                        <li><a href="{{ route('nasabah.claims') }}">Klaim</a></li>
                         <li><a href="{{ route('nasabah.profile') }}">Profil</a></li>
                         <li><form method="POST" action="{{ route('nasabah.logout') }}">@csrf<button type="submit">Logout</button></form></li>
                     </ul>

@@ -14,6 +14,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class ClaimResource extends Resource implements HasShieldPermissions
 {
@@ -158,19 +160,51 @@ class ClaimResource extends Resource implements HasShieldPermissions
                     ->options(self::getStatusOptions()),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn(Claim $record): bool => in_array($record->status, ['pending', 'review'], true))
-                    ->form([
-                        Forms\Components\TextInput::make('amount_approved')
-                            ->label('Nominal Disetujui')
-                            ->numeric()
-                            ->minValue(0)
-                            ->prefix('Rp')
-                            ->required(),
-                    ])
+                    ->form(function (Claim $record): array {
+                        return [
+                            Forms\Components\Section::make('Preview Pengajuan Klaim')
+                                ->schema([
+                                    Forms\Components\Placeholder::make('claim_number')
+                                        ->label('Nomor Klaim')
+                                        ->content($record->claim_number ?? '-'),
+                                    Forms\Components\Placeholder::make('nasabah')
+                                        ->label('Nasabah')
+                                        ->content($record->user?->fullname ?? '-'),
+                                    Forms\Components\Placeholder::make('policy')
+                                        ->label('No Polis')
+                                        ->content($record->policy?->policy_number ?? '-'),
+                                    Forms\Components\Placeholder::make('product')
+                                        ->label('Produk')
+                                        ->content($record->policy?->product?->name ?? '-'),
+                                    Forms\Components\Placeholder::make('incident_date')
+                                        ->label('Tanggal Kejadian')
+                                        ->content($record->incident_date
+                                            ? $record->incident_date->format('d M Y')
+                                            : '-'),
+                                    Forms\Components\Placeholder::make('amount_claimed')
+                                        ->label('Nominal Klaim')
+                                        ->content($record->amount_claimed !== null
+                                            ? 'Rp' . number_format((float) $record->amount_claimed, 2, '.', ',')
+                                            : '-'),
+                                    Forms\Components\Placeholder::make('description')
+                                        ->label('Deskripsi')
+                                        ->content($record->description ?: '-'),
+                                ])
+                                ->columns(2),
+                            Forms\Components\TextInput::make('amount_approved')
+                                ->label('Nominal Disetujui')
+                                ->numeric()
+                                ->minValue(0)
+                                ->prefix('Rp')
+                                ->required(),
+                        ];
+                    })
                     ->action(function (Claim $record, array $data): void {
                         $record->update([
                             'status' => 'approved',
@@ -249,20 +283,84 @@ class ClaimResource extends Resource implements HasShieldPermissions
                             ->default('-'),
                         Infolists\Components\TextEntry::make('approved_at')
                             ->label('Approve At')
-                            ->dateTime()
-                            ->default('-'),
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y H:i');
+                            }),
                         Infolists\Components\TextEntry::make('rejection_reason')
                             ->label('Catatan Penolakan')
                             ->placeholder('-')
                             ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('incident_date')
                             ->label('Tanggal Kejadian')
-                            ->date(),
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y');
+                            }),
                         Infolists\Components\TextEntry::make('description')
                             ->label('Deskripsi')
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+                Infolists\Components\Section::make('Dokumen Pendukung')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('evidence_files')
+                            ->label('File')
+                            ->getStateUsing(function ($record) {
+                                return $record->evidence_files;
+                            })
+                            ->html()
+                            ->formatStateUsing(function ($state): string {
+                                if ($state instanceof \Illuminate\Support\Collection) {
+                                    $files = $state->all();
+                                } elseif (is_string($state)) {
+                                    $decoded = json_decode($state, true);
+                                    if (json_last_error() === JSON_ERROR_NONE) {
+                                        $files = is_array($decoded) ? $decoded : [];
+                                    } else {
+                                        $files = [$state];
+                                    }
+                                } else {
+                                    $files = is_array($state) ? $state : [];
+                                }
+
+                                if (count($files) === 0) {
+                                    return '<span class="text-slate-500">-</span>';
+                                }
+
+                                $items = array_map(function ($path): string {
+                                    $url = str_starts_with($path, 'http://') || str_starts_with($path, 'https://')
+                                        ? $path
+                                        : Storage::disk('public')->url($path);
+                                    $name = e(basename($path));
+                                    $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true);
+                                    $isPdf = $extension === 'pdf';
+
+                                    if ($isImage) {
+                                        $preview = "<img class=\"mt-2 max-h-64 rounded-xl border border-slate-200\" src=\"{$url}\" alt=\"{$name}\" />";
+
+                                        return "<li><a class=\"text-primary-600 underline\" href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$name}</a>{$preview}</li>";
+                                    }
+
+                                    if ($isPdf) {
+                                        $preview = "<iframe class=\"mt-2 h-80 w-full rounded-xl border border-slate-200\" src=\"{$url}\" title=\"{$name}\"></iframe>";
+
+                                        return "<li><a class=\"text-primary-600 underline\" href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$name}</a>{$preview}</li>";
+                                    }
+
+                                    return "<li><a class=\"text-primary-600 underline\" href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$name}</a></li>";
+                                }, $files);
+
+                                return '<ul class="list-disc pl-4 space-y-1">' . implode('', $items) . '</ul>';
+                            }),
+                    ]),
             ]);
     }
 
@@ -277,6 +375,7 @@ class ClaimResource extends Resource implements HasShieldPermissions
     {
         return [
             'index' => Pages\ListClaims::route('/'),
+            'view' => Pages\ViewClaim::route('/{record}'),
             'edit' => Pages\EditClaim::route('/{record}/edit'),
         ];
     }
