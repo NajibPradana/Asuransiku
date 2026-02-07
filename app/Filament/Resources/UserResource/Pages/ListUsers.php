@@ -39,17 +39,18 @@ class ListUsers extends ListRecords
     public function getTabs(): array
     {
         /** @var \App\Models\User $user */
-        // $user = Auth::user();
+        $user = Auth::user();
         $tabs = [
             'all' => Tab::make()->query(fn($query) => $query->withoutTrashed()),
             'admin' => Tab::make()->query(fn($query) => $query->withoutTrashed()->with('roles')->whereRelation('roles', 'name', '=', 'admin')),
-            'operator' => Tab::make()->query(fn($query) => $query->withoutTrashed()->with('roles')->whereRelation('roles', 'name', '=', 'operator')),
+            'manager' => Tab::make()->query(fn($query) => $query->withoutTrashed()->with('roles')->whereRelation('roles', 'name', '=', 'manager')),
+            'nasabah' => Tab::make()->query(fn($query) => $query->withoutTrashed()->with('roles')->whereRelation('roles', 'name', '=', 'nasabah')),
             'trashed' => Tab::make()->icon('heroicon-o-trash')->query(fn($query) => $query->onlyTrashed()),
         ];
 
-        // if ($user->isSuperAdmin()) {
-        //     $tabs['superadmin'] = Tab::make()->query(fn ($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
-        // }
+        if ($user && $user->isSuperAdmin()) {
+            $tabs['superadmin'] = Tab::make()->query(fn($query) => $query->with('roles')->whereRelation('roles', 'name', '=', config('filament-shield.super_admin.name')));
+        }
 
         return $tabs;
     }

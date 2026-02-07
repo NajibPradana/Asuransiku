@@ -18,14 +18,14 @@ class CustomerOnly
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return redirect()->route('signin')->with('error', 'Please sign in to access this page.');
+            return redirect()->route('nasabah.login')->with('error', 'Please sign in to access this page.');
         }
 
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$user->hasRole('customer')) {
-            abort(403, 'Access denied. This page is only available for customers.');
+        if (!$user->hasRole('nasabah')) {
+            abort(403, 'Access denied. This page is only available for nasabah.');
         }
 
         // Check if email is verified

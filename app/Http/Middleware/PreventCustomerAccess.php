@@ -21,9 +21,9 @@ class PreventCustomerAccess
             /** @var User $user */
             $user = Auth::user();
 
-            // Check if user only has 'customer' role (no other roles)
-            if ($user->hasRole('customer') && $user->roles->count() === 1) {
-                // abort(403, 'Access denied. Customers are not allowed to access the admin panel.');
+            // Check if user only has 'nasabah' role (no other roles)
+            if ($user->hasRole('nasabah') && $user->roles->count() === 1) {
+                // abort(403, 'Access denied. Nasabah are not allowed to access the admin panel.');
                 abort(404);
             }
         }

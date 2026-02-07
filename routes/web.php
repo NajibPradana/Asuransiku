@@ -47,6 +47,24 @@ Route::get('/coming-soon', function () {
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'])
     ->name('contact.submit');
 
+Route::prefix('nasabah')->name('nasabah.')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\NasabahAuthController::class, 'showLogin'])
+        ->middleware('guest')
+        ->name('login');
+    Route::post('/login', [\App\Http\Controllers\NasabahAuthController::class, 'login'])
+        ->middleware('guest')
+        ->name('login.submit');
+    Route::post('/logout', [\App\Http\Controllers\NasabahAuthController::class, 'logout'])
+        ->middleware('auth')
+        ->name('logout');
+
+    Route::get('/', function () {
+        return view('frontend.nasabah.dashboard', [
+            'pageTitle' => 'Nasabah Dashboard',
+        ]);
+    })->middleware(['nasabah'])->name('dashboard');
+});
+
 
 // TODO: Create actual blog preview component
 Route::post('/blog-preview', function () {

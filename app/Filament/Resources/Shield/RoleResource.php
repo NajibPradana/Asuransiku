@@ -50,12 +50,17 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         // Administrator
         'super_admin' => 'Super Admin',
+        'admin' => 'Admin',
+        'manager' => 'Manager',
         'spv_ubikar' => 'SPV BP UBIKAR',
         'spv_pajak' => 'SPV Perpajakan',
 
         // Auditor
         'auditor_int' => 'Auditor Internal',
         'auditor_eks' => 'Auditor Eksternal',
+
+        // Nasabah
+        'nasabah' => 'Nasabah',
     ];
 
     public static function getRoleLabel(string $key): string
