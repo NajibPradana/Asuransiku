@@ -59,5 +59,20 @@ class RolesAndPermissionsSeeder extends Seeder
                 $roleCreated->givePermissionTo('access_log_viewer');
             }
         }
+
+        $insurancePermissions = Permission::query()
+            ->where('guard_name', 'web')
+            ->where(function ($query) {
+                $query->where('name', 'like', '%_product')
+                    ->orWhere('name', 'like', '%_policy')
+                    ->orWhere('name', 'like', '%_claim');
+            })
+            ->get();
+
+        Role::whereIn('name', ['admin', 'manager'])
+            ->get()
+            ->each(function (Role $role) use ($insurancePermissions) {
+                $role->givePermissionTo($insurancePermissions);
+            });
     }
 }

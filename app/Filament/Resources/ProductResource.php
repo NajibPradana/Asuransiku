@@ -25,6 +25,8 @@ class ProductResource extends Resource implements HasShieldPermissions
     protected static ?string $pluralModelLabel = 'Produk Asuransi';
     protected static ?string $label = 'Produk';
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 10;
 
     public static function getPermissionPrefixes(): array
     {
@@ -98,6 +100,20 @@ class ProductResource extends Resource implements HasShieldPermissions
                                     })
                             ),
 
+                        Forms\Components\Select::make('category')
+                            ->label('Kategori')
+                            ->options([
+                                'kesehatan' => 'Kesehatan',
+                                'perjalanan' => 'Perjalanan',
+                                'jiwa' => 'Jiwa',
+                                'kendaraan' => 'Kendaraan',
+                                'properti' => 'Properti',
+                                'usaha' => 'Usaha',
+                            ])
+                            ->required()
+                            ->searchable()
+                            ->native(false),
+
                         Forms\Components\MarkdownEditor::make('description')
                             ->label('Deskripsi')
                             ->maxLength(2000)
@@ -133,6 +149,12 @@ class ProductResource extends Resource implements HasShieldPermissions
                     ->label('Produk')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('category')
+                    ->label('Kategori')
+                    ->badge()
+                    ->formatStateUsing(fn(string $state): string => ucfirst($state))
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable()
                     ->toggleable(),
@@ -158,6 +180,16 @@ class ProductResource extends Resource implements HasShieldPermissions
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Kategori')
+                    ->options([
+                        'kesehatan' => 'Kesehatan',
+                        'perjalanan' => 'Perjalanan',
+                        'jiwa' => 'Jiwa',
+                        'kendaraan' => 'Kendaraan',
+                        'properti' => 'Properti',
+                        'usaha' => 'Usaha',
+                    ]),
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Aktif'),
             ])
@@ -180,6 +212,9 @@ class ProductResource extends Resource implements HasShieldPermissions
                         Infolists\Components\TextEntry::make('name')
                             ->label('Nama Produk')
                             ->size(Infolists\Components\TextEntry\TextEntrySize::Large),
+                        Infolists\Components\TextEntry::make('category')
+                            ->label('Kategori')
+                            ->formatStateUsing(fn(string $state): string => ucfirst($state)),
                         Infolists\Components\TextEntry::make('slug')
                             ->label('Slug'),
                         Infolists\Components\TextEntry::make('description')

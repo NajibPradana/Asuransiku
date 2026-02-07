@@ -16,12 +16,15 @@ class Claim extends Model
         'amount_approved',
         'evidence_files',
         'status',
-        'rejection_reason'
+        'rejection_reason',
+        'approved_by',
+        'approved_at'
     ];
 
     protected $casts = [
         'incident_date' => 'date',
         'evidence_files' => 'array',
+        'approved_at' => 'datetime',
     ];
 
     public function policy()
@@ -32,6 +35,11 @@ class Claim extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     protected static function booted()

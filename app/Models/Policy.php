@@ -13,12 +13,16 @@ class Policy extends Model
         'start_date',
         'end_date',
         'premium_paid',
-        'status'
+        'status',
+        'approved_by',
+        'approved_at',
+        'rejection_note'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'approved_at' => 'datetime',
     ];
 
     public function user()
@@ -34,6 +38,11 @@ class Policy extends Model
     public function claims()
     {
         return $this->hasMany(Claim::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     protected static function booted()
