@@ -17,12 +17,12 @@ class CustomerOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
+        if (!Auth::guard('nasabah')->check()) {
             return redirect()->route('nasabah.login')->with('error', 'Please sign in to access this page.');
         }
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::guard('nasabah')->user();
 
         if (!$user->hasRole('nasabah')) {
             abort(403, 'Access denied. This page is only available for nasabah.');

@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $user = auth()->user();
+    $user = auth('nasabah')->user();
     $displayName = trim(($user->firstname ?? '') . ' ' . ($user->lastname ?? '')) ?: 'Nasabah';
 @endphp
 
@@ -145,6 +145,52 @@
                         </div>
                         <button class="mt-6 w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white">Lacak Klaim</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Produk Tersedia</p>
+                        <h2 class="mt-2 text-2xl font-semibold text-slate-900">Pilih perlindungan sesuai kebutuhan</h2>
+                    </div>
+                    <span class="hidden rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-slate-700 sm:inline-flex">
+                        {{ $products->count() }} Produk Aktif
+                    </span>
+                </div>
+
+                <div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    @forelse($products as $product)
+                        <div class="nasabah-card rounded-3xl p-6">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900">{{ $product->name }}</h3>
+                                    <p class="mt-2 text-sm text-slate-500 line-clamp-3">
+                                        {{ $product->description ?? 'Produk ini memberikan perlindungan menyeluruh untuk kebutuhan Anda.' }}
+                                    </p>
+                                </div>
+                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Aktif</span>
+                            </div>
+                            <div class="mt-6 grid gap-3">
+                                <div class="flex items-center justify-between text-sm text-slate-600">
+                                    <span>Premi Dasar</span>
+                                    <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->base_premium, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm text-slate-600">
+                                    <span>Coverage</span>
+                                    <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->coverage_amount, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between">
+                                <a href="#" class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Lihat Detail</a>
+                                <button class="rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white">Ajukan</button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="nasabah-card rounded-3xl p-6 md:col-span-2 xl:col-span-3">
+                            <p class="text-sm text-slate-600">Belum ada produk aktif yang bisa ditampilkan.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
