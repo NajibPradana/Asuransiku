@@ -13,36 +13,36 @@
     @endphp
 
     <div class="max-w-2xl mx-auto">
+        <!-- Hidden flash message elements for SweetAlert -->
         @if(session('profile_incomplete'))
-            <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                {{ session('profile_incomplete') }}
-            </div>
+            <div id="profile-incomplete-flash" data-profile-incomplete="{{ session('profile_incomplete') }}" style="display: none;"></div>
         @endif
+        @if(session('success'))
+            <div id="success-flash" data-flash-success="{{ session('success') }}" style="display: none;"></div>
+        @endif
+        @if(session('error'))
+            <div id="error-flash" data-flash-error="{{ session('error') }}" style="display: none;"></div>
+        @endif
+        
         <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <h2 class="text-xl font-semibold text-slate-900 mb-6">Profil Nasabah</h2>
 
-            @if(session('success'))
-                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('nasabah.profile.update') }}" class="space-y-6">
+            <form method="POST" action="{{ route('nasabah.profile.update') }}" class="space-y-6" id="profile-form">
                 @csrf
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Nama Depan</label>
-                        <input type="text" name="firstname" value="{{ old('firstname', $user->firstname) }}" placeholder="Contoh: Budi" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                        <input type="text" name="firstname" value="{{ old('firstname', $user->firstname) }}" placeholder="Contoh: Budi" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                         @error('firstname')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Nama Belakang</label>
-                        <input type="text" name="lastname" value="{{ old('lastname', $user->lastname) }}" placeholder="Contoh: Santoso" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                        <input type="text" name="lastname" value="{{ old('lastname', $user->lastname) }}" placeholder="Contoh: Santoso" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                         @error('lastname')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -50,48 +50,57 @@
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Email</label>
-                        <input type="email" name="email" value="{{ old('email', $user->email) }}" placeholder="nama@email.com" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                        <input type="email" name="email" value="{{ old('email', $user->email) }}" placeholder="nama@email.com" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                         @error('email')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Username</label>
-                        <input type="text" name="username" value="{{ old('username', $user->username) }}" placeholder="contoh: nasabah01" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                        <input type="text" name="username" value="{{ old('username', $user->username) }}" placeholder="contoh: nasabah01" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                         @error('username')
-                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700">NIK</label>
-                    <input type="text" name="nik" value="{{ old('nik', $profile?->nik) }}" placeholder="Contoh: 327xxxxxxxxxxxxx" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                    <input type="text" name="nik" value="{{ old('nik', $profile?->nik) }}" placeholder="Contoh: 327xxxxxxxxxxxxx (16 digit)" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                     @error('nik')
-                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Tempat Lahir</label>
-                        <input type="text" name="birth_place" value="{{ old('birth_place', $profile?->birth_place) }}" placeholder="Contoh: Bandung" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" required>
+                        <input type="text" name="birth_place" value="{{ old('birth_place', $profile?->birth_place) }}" placeholder="Contoh: Bandung" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
+                        @error('birth_place')
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Tanggal Lahir</label>
-                        <input type="date" name="birth_date" value="{{ old('birth_date', optional($profile?->birth_date)->format('Y-m-d')) }}" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" placeholder="Pilih tanggal" required>
+                        <input type="date" name="birth_date" value="{{ old('birth_date', optional($profile?->birth_date)->format('Y-m-d')) }}" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" placeholder="Pilih tanggal" required>
+                        @error('birth_date')
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Alamat</label>
-                    <textarea name="address" rows="3" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700" placeholder="Contoh: Jl. Sudirman No. 123, Jakarta" required>{{ old('address', $profile?->address) }}</textarea>
+                    <textarea name="address" rows="3" class="mt-1 block w-full rounded-lg border border-slate-200 px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" placeholder="Contoh: Jl. Sudirman No. 123, Jakarta" required>{{ old('address', $profile?->address) }}</textarea>
+                    @error('address')
+                        <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Pekerjaan</label>
-                        <select name="occupation" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700" required>
+                        <select name="occupation" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                             <option value="" disabled {{ old('occupation', $profile?->occupation) ? '' : 'selected' }}>Pilih pekerjaan</option>
                             @foreach(($occupationOptions ?? []) as $value => $label)
                                 <option value="{{ $value }}" {{ old('occupation', $profile?->occupation) === $value ? 'selected' : '' }}>
@@ -99,10 +108,13 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('occupation')
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700">Gaji Per Bulan (Rp)</label>
-                        <select name="monthly_income" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700" required>
+                        <select name="monthly_income" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                             <option value="" disabled {{ old('monthly_income', $profile?->monthly_income) ? '' : 'selected' }}>Pilih range gaji</option>
                             @foreach(($incomeOptions ?? []) as $value => $label)
                                 <option value="{{ $value }}" {{ old('monthly_income', $profile?->monthly_income) === $value ? 'selected' : '' }}>
@@ -110,12 +122,15 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('monthly_income')
+                            <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Aset (Rp)</label>
-                    <select name="assets" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700" required>
+                    <select name="assets" class="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-700 focus:border-slate-900 focus:ring-slate-900" required>
                         <option value="" disabled {{ old('assets', $profile?->assets) ? '' : 'selected' }}>Pilih range aset</option>
                         @foreach(($assetOptions ?? []) as $value => $label)
                             <option value="{{ $value }}" {{ old('assets', $profile?->assets) === $value ? 'selected' : '' }}>
@@ -123,6 +138,9 @@
                             </option>
                         @endforeach
                     </select>
+                    @error('assets')
+                        <p class="mt-2 text-xs text-red-600 field-error">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -147,7 +165,7 @@
                 </div>
 
                 <div class="pt-6 border-t border-slate-200">
-                    <button type="submit" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white">Simpan Profil</button>
+                    <button type="submit" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition-colors" id="submit-btn">Simpan Profil</button>
                 </div>
             </form>
         </div>
@@ -156,3 +174,4 @@
 </div>
 
 @endsection
+

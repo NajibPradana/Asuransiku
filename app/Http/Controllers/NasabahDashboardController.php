@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Policy;
 use App\Models\Product;
+use App\Models\Claim;
 use Illuminate\Http\Request;
 
 class NasabahDashboardController extends Controller
@@ -34,6 +35,12 @@ class NasabahDashboardController extends Controller
             ->orderBy('end_date')
             ->first()?->end_date;
 
+        // Fetch the latest claim for the authenticated user
+        $latestClaim = Claim::where('user_id', $userId)
+            ->with('policy.product')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
         return view('frontend.nasabah.dashboard', [
             'pageTitle' => 'Nasabah Dashboard',
             'products' => $products,
@@ -41,6 +48,7 @@ class NasabahDashboardController extends Controller
             'activePoliciesCount' => $activePoliciesCount,
             'pendingPoliciesCount' => $pendingPoliciesCount,
             'nextRenewalDate' => $nextRenewalDate,
+            'latestClaim' => $latestClaim,
         ]);
     }
 }
