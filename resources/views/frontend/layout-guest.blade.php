@@ -118,6 +118,9 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css'])
+
+        <!-- SweetAlert2 CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     </head>
 
     @if(isset($siteSettings->is_maintenance) && $siteSettings->is_maintenance)
@@ -183,6 +186,10 @@
         </footer>
         @vite(['resources/js/app.js'])
         @stack('scripts')
+        
+        <!-- SweetAlert2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="{{ asset('js/sweetalert.js') }}"></script>
     </body>
     @endif
 </html>

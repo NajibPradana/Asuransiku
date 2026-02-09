@@ -107,42 +107,88 @@
                 </div>
 
                 <div class="nasabah-reveal delay-2">
-                    <div class="nasabah-card rounded-3xl p-6 sm:p-8">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-semibold uppercase text-slate-500">Status Klaim</p>
-                                <h2 class="mt-2 text-2xl font-semibold">Klaim Perjalanan</h2>
-                            </div>
-                            <span class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold text-amber-700">Dalam Review</span>
-                        </div>
-                        <div class="mt-6">
-                            <div class="h-2 w-full rounded-full bg-slate-200">
-                                <div class="h-2 rounded-full bg-amber-400" style="width: 68%;"></div>
-                            </div>
-                            <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
-                                <span>Diajukan</span>
-                                <span>Verifikasi</span>
-                                <span>Pembayaran</span>
-                            </div>
-                        </div>
-                        <div class="mt-6 grid gap-3">
-                            <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                    @if($latestClaim)
+                        @php
+                            $statusColors = [
+                                'pending' => 'bg-amber-100 text-amber-700',
+                                'review' => 'bg-blue-100 text-blue-700',
+                                'approved' => 'bg-emerald-100 text-emerald-700',
+                                'rejected' => 'bg-red-100 text-red-700',
+                                'paid' => 'bg-emerald-100 text-emerald-700',
+                            ];
+                            $statusLabels = [
+                                'pending' => 'Menunggu',
+                                'review' => 'Dalam Review',
+                                'approved' => 'Disetujui',
+                                'rejected' => 'Ditolak',
+                                'paid' => 'Dibayar',
+                            ];
+                            $progressWidths = [
+                                'pending' => '20%',
+                                'review' => '50%',
+                                'approved' => '80%',
+                                'rejected' => '100%',
+                                'paid' => '100%',
+                            ];
+                            $statusColor = $statusColors[$latestClaim->status] ?? 'bg-slate-100 text-slate-700';
+                            $statusLabel = $statusLabels[$latestClaim->status] ?? ucfirst($latestClaim->status);
+                            $progressWidth = $progressWidths[$latestClaim->status] ?? '10%';
+                        @endphp
+                        <div class="nasabah-card rounded-3xl p-6 sm:p-8">
+                            <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-800">Dokumen Lengkap</p>
-                                    <p class="text-xs text-slate-500">Diterima 05 Feb 2026</p>
+                                    <p class="text-sm font-semibold uppercase text-slate-500">Status Klaim</p>
+                                    <h2 class="mt-2 text-2xl font-semibold">{{ $latestClaim->policy->product->name ?? 'Klaim Asuransi' }}</h2>
                                 </div>
-                                <span class="text-xs font-semibold text-emerald-600">OK</span>
+                                <span class="rounded-full px-4 py-2 text-xs font-semibold {{ $statusColor }}">{{ $statusLabel }}</span>
                             </div>
-                            <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-800">Verifikasi Klaim</p>
-                                    <p class="text-xs text-slate-500">Estimasi selesai 2 hari</p>
+                            <div class="mt-4 text-sm text-slate-600">
+                                <p><span class="font-medium">No. Klaim:</span> {{ $latestClaim->claim_number }}</p>
+                            </div>
+                            <div class="mt-6">
+                                <div class="h-2 w-full rounded-full bg-slate-200">
+                                    <div class="h-2 rounded-full bg-slate-900 transition-all duration-500" style="width: {{ $progressWidth }};"></div>
                                 </div>
-                                <span class="text-xs font-semibold text-amber-600">Proses</span>
+                                <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                                    <span>Diajukan</span>
+                                    <span>Verifikasi</span>
+                                    <span>Pembayaran</span>
+                                </div>
                             </div>
+                            <div class="mt-6 grid gap-3">
+                                <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800">Tanggal Kejadian</p>
+                                        <p class="text-xs text-slate-500">{{ optional($latestClaim->incident_date)->format('d M Y') ?? '-' }}</p>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-600">{{ $latestClaim->incident_date ? \Carbon\Carbon::parse($latestClaim->incident_date)->diffForHumans() : '-' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800">Nominal Klaim</p>
+                                        <p class="text-xs text-slate-500">Rp{{ number_format((float) $latestClaim->amount_claimed, 0, ',', '.') }}</p>
+                                    </div>
+                                    <span class="text-xs font-semibold text-slate-600">{{ $statusLabel }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('nasabah.claims') }}" class="mt-6 block w-full rounded-2xl bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800 transition">Lacak Klaim</a>
                         </div>
-                        <button class="mt-6 w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white">Lacak Klaim</button>
-                    </div>
+                    @else
+                        <div class="nasabah-card rounded-3xl p-6 sm:p-8">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold uppercase text-slate-500">Status Klaim</p>
+                                    <h2 class="mt-2 text-2xl font-semibold">Belum Ada Klaim</h2>
+                                </div>
+                                <span class="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-500">-</span>
+                            </div>
+                            <div class="mt-6 text-center text-slate-500">
+                                <p class="text-sm">Anda belum mengajukan klaim apapun.</p>
+                                <p class="text-xs mt-1">Ajukan klaim untuk polis yang aktif.</p>
+                            </div>
+                            <a href="{{ route('nasabah.claims.create') }}" class="mt-6 block w-full rounded-2xl bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800 transition">Ajukan Klaim</a>
+                        </div>
+                    @endif
                 </div>
             </div>
 

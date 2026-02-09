@@ -48,6 +48,23 @@ class ProfileController extends Controller
             'occupation' => ['required', 'string', 'in:' . implode(',', array_keys($options['occupation']))],
             'monthly_income' => ['required', 'string', 'in:' . implode(',', array_keys($options['income']))],
             'assets' => ['required', 'string', 'in:' . implode(',', array_keys($options['assets']))],
+        ], [
+            'birth_date.before_or_equal' => 'Tanggal lahir harus minimal 17 tahun yang lalu.',
+            'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
+            'nik.unique' => 'NIK sudah terdaftar.',
+            'email.unique' => 'Email sudah digunakan.',
+            'username.unique' => 'Username sudah digunakan.',
+            'firstname.required' => 'Nama depan wajib diisi.',
+            'lastname.required' => 'Nama belakang wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'nik.required' => 'NIK wajib diisi.',
+            'birth_place.required' => 'Tempat lahir wajib diisi.',
+            'birth_date.required' => 'Tanggal lahir wajib diisi.',
+            'address.required' => 'Alamat wajib diisi.',
+            'occupation.required' => 'Pekerjaan wajib dipilih.',
+            'monthly_income.required' => 'Gaji per bulan wajib dipilih.',
+            'assets.required' => 'Aset wajib dipilih.',
         ]);
 
         $emailChanged = $validated['email'] !== $user->email;
