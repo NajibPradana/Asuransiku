@@ -133,6 +133,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasName, 
         return $this->hasOne(BookingOrderRecipient::class, 'user_id');
     }
 
+    public function nasabahProfile(): HasOne
+    {
+        return $this->hasOne(NasabahProfile::class, 'user_id');
+    }
+
     public function getNameAttribute()
     {
         return $this->firstname . ' ' . $this->lastname;

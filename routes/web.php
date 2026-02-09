@@ -71,6 +71,9 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\Nasabah\ProfileController::class, 'show'])
         ->middleware(['nasabah'])
         ->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\Nasabah\ProfileController::class, 'update'])
+        ->middleware(['nasabah'])
+        ->name('profile.update');
 
     // Policy routes
     Route::get('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'overview'])
@@ -85,13 +88,24 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
         ->middleware(['nasabah'])
         ->name('policies.pending');
 
-    // Allow guests to view the application form for testing; submission still requires auth.
     Route::get('/policies/apply', [\App\Http\Controllers\Nasabah\PolicyController::class, 'create'])
+        ->middleware(['nasabah', 'nasabah.profile'])
         ->name('policies.create');
 
     Route::post('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'store'])
-        ->middleware(['nasabah'])
+        ->middleware(['nasabah', 'nasabah.profile'])
         ->name('policies.store');
+
+    // Claim routes
+    Route::get('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'index'])
+        ->middleware(['nasabah'])
+        ->name('claims');
+    Route::get('/claims/create', [\App\Http\Controllers\Nasabah\ClaimController::class, 'create'])
+        ->middleware(['nasabah', 'nasabah.profile'])
+        ->name('claims.create');
+    Route::post('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'store'])
+        ->middleware(['nasabah', 'nasabah.profile'])
+        ->name('claims.store');
 });
 
 

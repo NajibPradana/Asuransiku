@@ -161,6 +161,7 @@ class PolicyResource extends Resource implements HasShieldPermissions
                     ->options(self::getStatusOptions()),
             ])
             ->actions([
+                    Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')
@@ -240,18 +241,35 @@ class PolicyResource extends Resource implements HasShieldPermissions
                             ->default('-'),
                         Infolists\Components\TextEntry::make('approved_at')
                             ->label('Approve At')
-                            ->dateTime()
-                            ->default('-'),
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y H:i');
+                            }),
                         Infolists\Components\TextEntry::make('rejection_note')
                             ->label('Catatan Penolakan')
                             ->placeholder('-')
                             ->columnSpanFull(),
                         Infolists\Components\TextEntry::make('start_date')
                             ->label('Mulai')
-                            ->date(),
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y');
+                            }),
                         Infolists\Components\TextEntry::make('end_date')
                             ->label('Berakhir')
-                            ->date(),
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y');
+                            }),
                     ])
                     ->columns(2),
             ]);
@@ -268,6 +286,7 @@ class PolicyResource extends Resource implements HasShieldPermissions
     {
         return [
             'index' => Pages\ListPolicies::route('/'),
+            'view' => Pages\ViewPolicy::route('/{record}'),
             'edit' => Pages\EditPolicy::route('/{record}/edit'),
         ];
     }
