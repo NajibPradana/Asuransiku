@@ -135,21 +135,42 @@
         $siteLogo = $siteSettings->logo ? Storage::url($siteSettings->logo) : 'https://placehold.co/240x50.jpeg?text=No%20Image';
         @endphp
         <main class="flex-1">
-            <header class="text-gray-50 body-font bg-sky-600">
-                <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-                    <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-                        <img src="{{ $siteLogo }}" alt="Logo" class="h-[60px]">  
-                    </a>
-                    <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
-                    <a class="mr-5 hover:text-amber-400" href="{{ route('home') }}">Home</a>
-                    <a class="mr-5 hover:text-amber-400" href="{{ route('post.list') }}">Informasi</a>
-                    <a class="mr-5 hover:text-amber-400" href="{{ route('home.services') }}">Layanan</a>
-                    <a class="mr-5 hover:text-amber-400" href="{{ url('/post/faq') }}">Pertanyaan</a>
-                    </nav>
-                    <a href="{{ route('filament.admin.auth.login') }}" 
-                        class="inline-flex items-center py-1 px-3 focus:outline-none hover:text-amber-400 rounded text-base text-gray-50 mt-4 md:mt-0 border-b-2 border-gray-50 hover:border-amber-400">
-                        Login / Register<x-heroicon-o-arrow-right-start-on-rectangle class="w-4 h-4 fi-icon-btn-icon" />
-                    </a>
+            <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100">
+                <div class="container mx-auto px-6">
+                    <div class="flex items-center justify-between h-16 md:h-20">
+                        <!-- Logo -->
+                        <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                            <img src="{{ $siteLogo }}" alt="Logo" class="h-9 md:h-10 transition-transform duration-300 group-hover:scale-105">
+                            <span class="text-lg md:text-xl font-bold text-slate-800 hidden sm:block tracking-tight">{{ $brandName }}</span>
+                        </a>
+
+                        <!-- Navigation Links -->
+                        <nav class="hidden lg:flex items-center gap-0.5">
+                            <a href="{{ route('home') }}" class="px-4 py-2 rounded-full text-slate-600 hover:text-sky-600 hover:bg-sky-50/80 font-medium transition-all duration-300 text-sm">
+                                Beranda
+                            </a>
+                            <a href="{{ route('home.services') }}" class="px-4 py-2 rounded-full text-slate-600 hover:text-sky-600 hover:bg-sky-50/80 font-medium transition-all duration-300 text-sm">
+                                Layanan
+                            </a>
+                            <a href="{{ url('/post/faq') }}" class="px-4 py-2 rounded-full text-slate-600 hover:text-sky-600 hover:bg-sky-50/80 font-medium transition-all duration-300 text-sm">
+                                FAQ
+                            </a>
+                            <a href="#kontak" class="px-4 py-2 rounded-full text-slate-600 hover:text-sky-600 hover:bg-sky-50/80 font-medium transition-all duration-300 text-sm">
+                                Kontak
+                            </a>
+                        </nav>
+
+                        <!-- Auth Buttons -->
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('nasabah.login') }}" 
+                                class="group flex items-center gap-2 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-full transition-all duration-300 shadow-lg shadow-sky-600/25 hover:shadow-sky-600/40 hover:-translate-y-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4.5 h-4.5 transition-transform duration-300 group-hover:scale-110">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                                <span class="hidden sm:inline text-sm">Login</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </header>
 
