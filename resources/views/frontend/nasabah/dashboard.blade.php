@@ -15,9 +15,14 @@
 
     .nasabah-card {
         backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.85);
         border: 1px solid rgba(15, 23, 42, 0.08);
         box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .nasabah-card:hover {
+        box-shadow: 0 25px 50px rgba(15, 23, 42, 0.12);
     }
 
     .nasabah-sheen {
@@ -66,41 +71,68 @@
         <div class="absolute top-24 -left-16 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl nasabah-float" style="animation-delay: 2s;"></div>
 
         <div class="container mx-auto px-6 py-12 lg:py-16">
-            <div>
-                <div class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Area Nasabah</div>
+            <!-- Header -->
+            <div class="mb-8">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
+                    🛡️ NIMS Portal Nasabah
+                </span>
             </div>
+            
             <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                 <div class="nasabah-reveal">
-                    <div class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
-                        Portal Nasabah
-                    </div>
-                    <h1 class="mt-6 text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
-                        Halo, {{ $displayName }}.
-                        <span class="block text-slate-600">Pantau polis dan klaim dengan mudah.</span>
+                    <h1 class="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
+                        Selamat Datang, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-amber-500">{{ $displayName }}</span>
                     </h1>
+                    <p class="mt-4 text-lg text-slate-600 italic">
+                        "Managing Protection with Precision"
+                    </p>
                     <p class="mt-5 max-w-xl text-lg text-slate-600">
-                        Semua kebutuhan perlindungan Anda terkonsolidasi dalam satu halaman. Cek status klaim, unduh dokumen, dan akses layanan prioritas kapan pun Anda perlu.
+                        Kelola polis Anda, monitoring status klaim real-time, dan akses layanan prioritas NIMS dengan mudah dan aman.
                     </p>
                     <div class="mt-8 flex flex-wrap gap-3">
-                        <a href="{{ route('nasabah.policies.create') }}" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20">Ajukan Klaim</a>
-                        <a href="#" class="rounded-full border border-slate-900/10 bg-white px-6 py-3 text-sm font-semibold text-slate-900">Unduh Kartu Polis</a>
+                        <a href="{{ route('nasabah.claims.create') }}" class="inline-flex items-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 hover:bg-slate-800 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Ajukan Klaim Baru
+                        </a>
+                        <a href="{{ route('nasabah.policies') }}" class="inline-flex items-center rounded-full border-2 border-slate-900/20 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                            Lihat Semua Polis
+                        </a>
                     </div>
 
                     <div class="mt-10 grid gap-4 sm:grid-cols-2">
                         <a href="{{ route('nasabah.policies') }}" class="nasabah-card relative overflow-hidden rounded-2xl p-5 transition hover:shadow-lg">
                             <div class="absolute inset-0 nasabah-sheen opacity-60"></div>
-                            <p class="text-sm font-semibold uppercase text-slate-500">Polis Aktif</p>
-                            <p class="mt-3 text-3xl font-semibold">{{ $activePoliciesCount }}</p>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-emerald-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-semibold uppercase text-slate-500">Polis Aktif</p>
+                            </div>
+                            <p class="text-3xl font-semibold">{{ $activePoliciesCount }}</p>
                             @if($nextRenewalDate)
-                                <p class="mt-2 text-sm text-slate-500">Perpanjangan berikutnya: {{ $nextRenewalDate->format('d M Y') }}</p>
+                                <p class="mt-2 text-sm text-slate-500">Perpanjangan: {{ $nextRenewalDate->format('d M Y') }}</p>
                             @else
                                 <p class="mt-2 text-sm text-slate-500">Belum ada polis aktif</p>
                             @endif
                         </a>
                         <a href="{{ route('nasabah.policies') }}" class="nasabah-card relative overflow-hidden rounded-2xl p-5 transition hover:shadow-lg">
                             <div class="absolute inset-0 nasabah-sheen opacity-60"></div>
-                            <p class="text-sm font-semibold uppercase text-slate-500">Pengajuan Menunggu</p>
-                            <p class="mt-3 text-3xl font-semibold">{{ $pendingPoliciesCount }}</p>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-amber-600">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm font-semibold uppercase text-slate-500">Menunggu Persetujuan</p>
+                            </div>
+                            <p class="text-3xl font-semibold">{{ $pendingPoliciesCount }}</p>
                             <p class="mt-2 text-sm text-slate-500">Sedang dalam review manager</p>
                         </a>
                     </div>

@@ -2,7 +2,8 @@
 
 @section('content')
 @php
-    $brandTitle = 'Portal Nasabah';
+    $brandTitle = 'Nusantara Insurance Management System';
+    $brandSubtitle = 'Managing Protection with Precision';
 @endphp
 
 <style>
@@ -40,22 +41,25 @@
     <div class="w-full max-w-5xl grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
         <div class="text-slate-900">
             <span class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
-                {{ $brandTitle }}
+                🛡️ NIMS Portal
             </span>
             <h1 class="mt-6 text-4xl font-semibold leading-tight sm:text-5xl">
-                Masuk untuk mengelola perlindungan Anda.
+                {{ $brandTitle }}
             </h1>
+            <p class="mt-3 text-lg text-slate-600 font-medium">
+                {{ $brandSubtitle }}
+            </p>
             <p class="mt-5 text-lg text-slate-600">
-                Akses status polis, klaim, dan layanan prioritas dalam satu dashboard yang aman dan mudah digunakan.
+                Masuk ke portal nasabah untuk mengelola polis, mengajukan klaim, dan mengakses layanan prioritas dalam satu dashboard yang aman dan mudah digunakan.
             </p>
             <div class="mt-8 grid gap-4 sm:grid-cols-2">
                 <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
-                    <p class="text-sm font-semibold text-slate-700">Keamanan Terverifikasi</p>
-                    <p class="mt-2 text-sm text-slate-500">Login hanya untuk nasabah terdaftar.</p>
+                    <p class="text-sm font-semibold text-slate-700">🔒 Keamanan Terverifikasi</p>
+                    <p class="mt-2 text-sm text-slate-500">Login hanya untuk nasabah terdaftar dengan enkripsi penuh.</p>
                 </div>
                 <div class="rounded-2xl border border-slate-200 bg-white/80 p-4">
-                    <p class="text-sm font-semibold text-slate-700">Layanan 24/7</p>
-                    <p class="mt-2 text-sm text-slate-500">Tim kami siap membantu kapan pun.</p>
+                    <p class="text-sm font-semibold text-slate-700">⏰ Layanan 24/7</p>
+                    <p class="mt-2 text-sm text-slate-500">Tim kami siap membantu kapan pun Anda membutuhkan.</p>
                 </div>
             </div>
         </div>
@@ -98,7 +102,7 @@
             </form>
 
             <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-                Belum punya akun? Hubungi admin untuk aktivasi akun nasabah.
+                <strong>Belum punya akun?</strong> Hubungi admin untuk aktivasi akun nasabah Anda.
             </div>
         </div>
     </div>
