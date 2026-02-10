@@ -54,6 +54,14 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/login', [\App\Http\Controllers\NasabahAuthController::class, 'login'])
         ->middleware('guest:nasabah')
         ->name('login.submit');
+    
+    Route::get('/register', [\App\Http\Controllers\NasabahAuthController::class, 'showRegister'])
+        ->middleware('guest:nasabah')
+        ->name('register');
+    Route::post('/register', [\App\Http\Controllers\NasabahAuthController::class, 'register'])
+        ->middleware('guest:nasabah')
+        ->name('register.submit');
+    
     Route::post('/logout', [\App\Http\Controllers\NasabahAuthController::class, 'logout'])
         ->middleware('auth:nasabah')
         ->name('logout');

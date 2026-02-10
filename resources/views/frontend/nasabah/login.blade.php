@@ -101,8 +101,9 @@
                 </button>
             </form>
 
-            <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-                <strong>Belum punya akun?</strong> Hubungi admin untuk aktivasi akun nasabah Anda.
+            <div class="mt-6 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-800">
+                <strong>Belum punya akun?</strong> 
+                <a href="{{ route('nasabah.register') }}" class="font-semibold underline hover:text-blue-600">Daftar disini</a>
             </div>
         </div>
     </div>
