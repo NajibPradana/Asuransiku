@@ -81,7 +81,7 @@
             <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                 <div class="nasabah-reveal">
                     <h1 class="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
-                        Selamat Datang, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-amber-500">{{ $displayName }}</span>
+                        Selamat Datang, {{ $displayName }}
                     </h1>
                     <p class="mt-4 text-lg text-slate-600 italic">
                         "Managing Protection with Precision"
