@@ -7,6 +7,7 @@ use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Spatie\Permission\PermissionRegistrar;
 
 class RoleSwitcher extends Page
 {
@@ -110,6 +111,7 @@ class RoleSwitcher extends Page
 
             session()->put('active_role', $selectedRole->name);
             session()->put('active_role_id', $selectedRole->id);
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             $this->dispatch('role-switched');
         } catch (\Throwable $th) {
