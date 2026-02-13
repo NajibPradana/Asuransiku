@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\Login as BasePage;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\PermissionRegistrar;
 
 class Login extends BasePage
 {
@@ -105,7 +107,44 @@ class Login extends BasePage
         }
 
         session()->regenerate();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->ensureActiveRoleForSession($user);
 
         return app(LoginResponse::class);
+    }
+
+    protected function ensureActiveRoleForSession(?object $user): void
+    {
+        if (session()->has('active_role')) {
+            return;
+        }
+
+        if (!($user instanceof User)) {
+            return;
+        }
+
+        $roles = $user->roles()->select(['id', 'name'])->get();
+
+        if ($roles->isEmpty()) {
+            return;
+        }
+
+        $selectedRole = null;
+        $superAdminName = config('filament-shield.super_admin.name');
+
+        if (!empty($superAdminName)) {
+            $selectedRole = $roles->firstWhere('name', $superAdminName);
+        }
+
+        if (!$selectedRole && $roles->count() === 1) {
+            $selectedRole = $roles->first();
+        }
+
+        if (!$selectedRole) {
+            return;
+        }
+
+        session()->put('active_role', $selectedRole->name);
+        session()->put('active_role_id', $selectedRole->id);
     }
 }
