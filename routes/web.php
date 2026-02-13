@@ -25,6 +25,7 @@ Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('h
 Route::get('post/list', [\App\Http\Controllers\PostController::class, 'list'])->name('post.list');
 Route::get('post/{slug}', [\App\Http\Controllers\PostController::class, 'show'])->name('post.show');
 Route::get('/services', [\App\Http\Controllers\HomeController::class, 'services'])->name('home.services');
+Route::get('/service/{category}', [\App\Http\Controllers\HomeController::class, 'serviceDetail'])->name('home.service.detail');
 
 Route::get('/blog', BlogList::class)->name('blog');
 
@@ -74,6 +75,11 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/products', [\App\Http\Controllers\Nasabah\ProductController::class, 'index'])
         ->middleware(['nasabah'])
         ->name('products');
+    
+    // Product detail page
+    Route::get('/products/{slug}', [\App\Http\Controllers\Nasabah\ProductController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('products.show');
 
     // Profile page for nasabah
     Route::get('/profile', [\App\Http\Controllers\Nasabah\ProfileController::class, 'show'])
