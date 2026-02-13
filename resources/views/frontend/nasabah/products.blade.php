@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="mt-6 flex items-center gap-3">
-                    <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</button>
+                    <a href="{{ route('nasabah.products.show', $product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">Lihat Detail</a>
                     <a href="{{ route('nasabah.policies.create') }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition text-center">Ajukan</a>
                 </div>
             </div>
