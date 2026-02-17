@@ -123,7 +123,7 @@ class Login extends BasePage
             return;
         }
 
-        $roles = $user->roles()->select(['id', 'name'])->get();
+        $roles = $user->roles()->select(['roles.id', 'roles.name'])->get();
 
         if ($roles->isEmpty()) {
             return;
