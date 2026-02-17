@@ -190,24 +190,24 @@
             <div class="lg:col-span-1">
                 <div class="sticky top-6 space-y-4">
                     <!-- Action Buttons -->
-                    <div class="bg-white rounded-lg p-6 border border-gray-200">
-                        <h3 class="text-sm font-semibold text-gray-900 mb-4">Aksi</h3>
+                    <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-6 text-white shadow-lg">
+                        <h3 class="text-sm font-bold text-white mb-4">Aksi Cepat</h3>
                         <div class="space-y-3">
                             @if($policy->status === 'active')
-                                <a href="{{ route('nasabah.claims.create', ['policy_id' => $policy->id]) }}" class="block w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-gray-800 transition">
+                                <a href="{{ route('nasabah.claims.create', ['policy_id' => $policy->id]) }}" class="block w-full rounded-lg bg-white text-blue-600 px-4 py-3 text-center text-sm font-bold hover:bg-gray-100 transition shadow-md">
                                     Ajukan Klaim
                                 </a>
                             @elseif($policy->status === 'expired')
                                 <form action="{{ route('nasabah.policies.renew', $policy) }}" method="POST" class="w-full">
                                     @csrf
-                                    <button type="submit" class="w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition">
+                                    <button type="submit" class="w-full rounded-lg bg-white text-blue-600 px-4 py-3 text-sm font-bold hover:bg-gray-100 transition shadow-md">
                                         Perpanjang Polis
                                     </button>
                                 </form>
                             @elseif($policy->status === 'pending')
                                 <form action="{{ route('nasabah.policies.cancel', $policy) }}" method="POST" class="w-full">
                                     @csrf
-                                    <button type="submit" class="w-full rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 transition" onclick="return confirm('Apakah Anda yakin ingin membatalkan polis ini?')">
+                                    <button type="submit" class="w-full rounded-lg bg-white text-red-600 px-4 py-3 text-sm font-bold hover:bg-gray-100 transition shadow-md" onclick="return confirm('Apakah Anda yakin ingin membatalkan polis ini?')">
                                         Batalkan Pengajuan
                                     </button>
                                 </form>
@@ -217,24 +217,24 @@
 
                     <!-- Summary Card -->
                     <div class="bg-white rounded-lg p-6 border border-gray-200">
-                        <h3 class="text-sm font-semibold text-gray-900 mb-4">Ringkasan</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Durasi</span>
-                                <span class="font-semibold text-gray-900">{{ $policy->start_date->diffInMonths($policy->end_date) }} bulan</span>
+                        <h3 class="text-sm font-bold text-gray-900 mb-4">Ringkasan Polis</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                                <p class="text-xs font-bold uppercase text-blue-600 mb-1">Durasi</p>
+                                <p class="text-2xl font-bold text-blue-900">{{ $policy->start_date->diffInMonths($policy->end_date) }} bulan</p>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Premi</span>
-                                <span class="font-semibold text-gray-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</span>
+                            <div class="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+                                <p class="text-xs font-bold uppercase text-green-600 mb-1">Premi</p>
+                                <p class="text-2xl font-bold text-green-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</p>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Coverage</span>
-                                <span class="font-semibold text-gray-900">Rp{{ number_format((float) $policy->product->coverage_amount, 0, ',', '.') }}</span>
+                            <div class="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+                                <p class="text-xs font-bold uppercase text-purple-600 mb-1">Coverage</p>
+                                <p class="text-2xl font-bold text-purple-900">Rp{{ number_format((float) $policy->product->coverage_amount, 0, ',', '.') }}</p>
                             </div>
                             <hr class="my-2" />
                             <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-600">Status</span>
-                                <span class="px-2 py-1 rounded text-xs font-semibold
+                                <span class="text-sm text-gray-600 font-medium">Status</span>
+                                <span class="px-3 py-1 rounded-lg text-xs font-bold
                                     @if($policy->status === 'active') bg-green-100 text-green-800
                                     @elseif($policy->status === 'pending') bg-yellow-100 text-yellow-800
                                     @elseif($policy->status === 'expired') bg-gray-100 text-gray-800
