@@ -198,37 +198,73 @@
                 </div>
 
                 <!-- Summary Card -->
-                <div class="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white">
-                    <h3 class="text-sm font-semibold opacity-90 mb-4">Ringkasan Polis</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                            <span class="text-sm">Durasi</span>
-                            <span class="font-semibold">{{ $policy->start_date->diffInMonths($policy->end_date) }} Bulan</span>
+                <div class="rounded-2xl border-2 border-slate-900 bg-white p-6">
+                    <h3 class="text-base font-bold text-slate-900 mb-5">Ringkasan Polis</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between rounded-lg bg-blue-50 px-4 py-3 border border-blue-200">
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-blue-600">Durasi</p>
+                                <p class="mt-1 text-lg font-bold text-blue-900">{{ $policy->start_date->diffInMonths($policy->end_date) }} Bulan</p>
+                            </div>
+                            <svg class="h-8 w-8 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v8a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H9v1a1 1 0 11-2 0V7H6v1a1 1 0 11-2 0V7z"></path>
+                            </svg>
                         </div>
-                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                            <span class="text-sm">Premi</span>
-                            <span class="font-semibold">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</span>
+                        <div class="flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3 border border-emerald-200">
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-emerald-600">Premi</p>
+                                <p class="mt-1 text-lg font-bold text-emerald-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</p>
+                            </div>
+                            <svg class="h-8 w-8 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8.16 2.75a.75.75 0 00-1.08 0l-5.5 5.5a.75.75 0 101.06 1.06L7 5.06v12.19a.75.75 0 001.5 0V5.06l4.32 4.32a.75.75 0 101.06-1.06l-5.5-5.5z"></path>
+                                <path d="M12.5 15a.75.75 0 00-.75.75v1.5a.75.75 0 001.5 0v-1.5a.75.75 0 00-.75-.75z"></path>
+                            </svg>
                         </div>
-                        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                            <span class="text-sm">Coverage</span>
-                            <span class="font-semibold">Rp{{ number_format((float) $policy->product->coverage_amount, 0, ',', '.') }}</span>
+                        <div class="flex items-center justify-between rounded-lg bg-purple-50 px-4 py-3 border border-purple-200">
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-purple-600">Coverage</p>
+                                <p class="mt-1 text-lg font-bold text-purple-900">Rp{{ number_format((float) $policy->product->coverage_amount, 0, ',', '.') }}</p>
+                            </div>
+                            <svg class="h-8 w-8 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 2a1 1 0 011-1h8a1 1 0 011 1v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v6h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H8v1a1 1 0 11-2 0v-1H4a2 2 0 01-2-2v-2H1a1 1 0 110-2h1V9H1a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM4 5h12v10H4V5z" clip-rule="evenodd"></path>
+                            </svg>
                         </div>
-                        <div class="flex items-center justify-between pt-2">
-                            <span class="text-sm">Status</span>
-                            <span class="rounded-full px-2 py-1 text-xs font-semibold 
-                                @if($policy->status === 'active') bg-emerald-500
-                                @elseif($policy->status === 'pending') bg-amber-500
-                                @elseif($policy->status === 'expired') bg-gray-500
-                                @elseif($policy->status === 'cancelled') bg-red-500
-                                @endif">
-                                {{ match($policy->status) {
-                                    'active' => 'Aktif',
-                                    'pending' => 'Menunggu',
-                                    'expired' => 'Expired',
-                                    'cancelled' => 'Ditolak',
-                                    default => ucfirst($policy->status)
-                                } }}
-                            </span>
+                        <div class="flex items-center justify-between rounded-lg 
+                            @if($policy->status === 'active') bg-emerald-50 border border-emerald-300
+                            @elseif($policy->status === 'pending') bg-amber-50 border border-amber-300
+                            @elseif($policy->status === 'expired') bg-slate-100 border border-slate-300
+                            @elseif($policy->status === 'cancelled') bg-red-50 border border-red-300
+                            @endif px-4 py-3">
+                            <div>
+                                <p class="text-xs font-semibold uppercase 
+                                    @if($policy->status === 'active') text-emerald-600
+                                    @elseif($policy->status === 'pending') text-amber-600
+                                    @elseif($policy->status === 'expired') text-slate-600
+                                    @elseif($policy->status === 'cancelled') text-red-600
+                                    @endif">Status</p>
+                                <p class="mt-1 text-lg font-bold 
+                                    @if($policy->status === 'active') text-emerald-900
+                                    @elseif($policy->status === 'pending') text-amber-900
+                                    @elseif($policy->status === 'expired') text-slate-900
+                                    @elseif($policy->status === 'cancelled') text-red-900
+                                    @endif">
+                                    {{ match($policy->status) {
+                                        'active' => 'Aktif',
+                                        'pending' => 'Menunggu',
+                                        'expired' => 'Expired',
+                                        'cancelled' => 'Ditolak',
+                                        default => ucfirst($policy->status)
+                                    } }}
+                                </p>
+                            </div>
+                            <svg class="h-8 w-8 
+                                @if($policy->status === 'active') text-emerald-400
+                                @elseif($policy->status === 'pending') text-amber-400
+                                @elseif($policy->status === 'expired') text-slate-400
+                                @elseif($policy->status === 'cancelled') text-red-400
+                                @endif" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 5a1 1 0 00-1.65-.757L11 8.819l-2.35-2.35a1 1 0 10-1.414 1.414l3.364 3.364a1 1 0 001.414 0l7.071-7.071A1 1 0 0018 5z" clip-rule="evenodd"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
