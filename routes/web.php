@@ -130,6 +130,9 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'store'])
         ->middleware(['nasabah', 'nasabah.profile'])
         ->name('claims.store');
+    Route::get('/claims/{claim}', [\App\Http\Controllers\Nasabah\ClaimController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('claims.show');
 });
 
 

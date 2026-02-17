@@ -94,4 +94,21 @@ class ClaimController extends Controller
             ->with('success', 'Pengajuan klaim berhasil dikirim. Tim kami akan memverifikasi dokumen Anda.')
             ->with('show_sweet_alert', true);
     }
+
+    /**
+     * Display the specified claim.
+     */
+    public function show(Claim $claim)
+    {
+        $userId = Auth::guard('nasabah')->id();
+
+        // Authorization check
+        if ($claim->user_id !== $userId) {
+            abort(403);
+        }
+
+        $claim->load('policy.product', 'approvedBy');
+
+        return view('frontend.nasabah.claim-detail', compact('claim'));
+    }
 }
