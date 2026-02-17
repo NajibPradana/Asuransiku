@@ -20,8 +20,9 @@
                     </div>
                     <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
                         @if($claim->status === 'approved') bg-emerald-100 text-emerald-700
+                        @elseif($claim->status === 'paid') bg-blue-100 text-blue-700
                         @elseif($claim->status === 'rejected') bg-red-100 text-red-700
-                        @elseif($claim->status === 'review') bg-blue-100 text-blue-700
+                        @elseif($claim->status === 'review') bg-yellow-100 text-yellow-700
                         @else bg-amber-100 text-amber-700 @endif">
                         {{ ucfirst($claim->status) }}
                     </span>
@@ -40,6 +41,12 @@
                         <p class="text-slate-900">{{ $claim->amount_approved ? 'Rp' . number_format((float) $claim->amount_approved, 0, ',', '.') : '-' }}</p>
                     </div>
                 </div>
+                @if($claim->status === 'paid')
+                    <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                        <p class="text-xs font-semibold uppercase text-emerald-700 mb-1">Tanggal Dibayar</p>
+                        <p class="text-sm text-emerald-900">{{ optional($claim->paid_at)->format('d M Y H:i') ?? '-' }}</p>
+                    </div>
+                @endif
                 @if($claim->status === 'rejected' && $claim->rejection_reason)
                     <div class="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {{ $claim->rejection_reason }}

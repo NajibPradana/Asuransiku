@@ -143,6 +143,10 @@ class ClaimResource extends Resource implements HasShieldPermissions
                     ->label('Approve At')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('paid_at')
+                    ->label('Tanggal Dibayar')
+                    ->dateTime()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('incident_date')
                     ->label('Kejadian')
                     ->date()
@@ -245,6 +249,23 @@ class ClaimResource extends Resource implements HasShieldPermissions
                             ->danger()
                             ->send();
                     }),
+                Tables\Actions\Action::make('markAsPaid')
+                    ->label('Tandai Dibayar')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('info')
+                    ->visible(fn(Claim $record): bool => $record->status === 'approved')
+                    ->action(function (Claim $record): void {
+                        $record->update([
+                            'status' => 'paid',
+                            'paid_at' => now(),
+                        ]);
+
+                        Notification::make()
+                            ->title('Klaim ditandai sebagai dibayar')
+                            ->success()
+                            ->send();
+                    })
+                    ->requiresConfirmation(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -283,6 +304,15 @@ class ClaimResource extends Resource implements HasShieldPermissions
                             ->default('-'),
                         Infolists\Components\TextEntry::make('approved_at')
                             ->label('Approve At')
+                            ->formatStateUsing(function ($state): string {
+                                if (empty($state)) {
+                                    return '-';
+                                }
+
+                                return \Illuminate\Support\Carbon::parse($state)->format('d M Y H:i');
+                            }),
+                        Infolists\Components\TextEntry::make('paid_at')
+                            ->label('Tanggal Dibayar')
                             ->formatStateUsing(function ($state): string {
                                 if (empty($state)) {
                                     return '-';
