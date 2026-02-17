@@ -223,4 +223,23 @@ class PolicyController extends Controller
             ->with('success', 'Pengajuan polis berhasil dibatalkan.')
             ->with('show_sweet_alert', true);
     }
+
+    /**
+     * Show policy details
+     */
+    public function show(Policy $policy)
+    {
+        $userId = auth('nasabah')->id() ?? auth()->id();
+
+        // Authorization check
+        if ($policy->user_id !== $userId) {
+            abort(403, 'Unauthorized');
+        }
+
+        $policy->load('product', 'claims');
+
+        return view('frontend.nasabah.policy-detail', [
+            'policy' => $policy,
+        ]);
+    }
 }

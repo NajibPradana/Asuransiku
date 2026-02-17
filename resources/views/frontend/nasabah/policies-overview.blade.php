@@ -109,7 +109,7 @@
                         </div>
 
                         <div class="mt-6 flex gap-3">
-                            <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</button>
+                            <a href="{{ route('nasabah.policies.show', $policy) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">Lihat Detail</a>
                             <a href="{{ route('nasabah.claims.create', ['policy_id' => $policy->id]) }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 text-center transition">Ajukan Klaim</a>
                         </div>
                     </div>
@@ -176,7 +176,7 @@
                         </div>
 
                         <div class="mt-6 flex gap-3">
-                            <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</button>
+                            <a href="{{ route('nasabah.policies.show', $policy) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">Lihat Detail</a>
                             <form action="{{ route('nasabah.policies.cancel', $policy) }}" method="POST" class="flex-1">
                                 @csrf
                                 <button type="submit" class="w-full rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition" onclick="return confirm('Apakah Anda yakin ingin membatalkan pengajuan polis ini?')">Batalkan</button>
@@ -246,7 +246,7 @@
                         </div>
 
                         <div class="mt-6 flex gap-3">
-                            <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</button>
+                            <a href="{{ route('nasabah.policies.show', $policy) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">Lihat Detail</a>
                             <form action="{{ route('nasabah.policies.renew', $policy) }}" method="POST" class="flex-1">
                                 @csrf
                                 <button type="submit" class="w-full rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition">Perpanjang</button>
@@ -317,7 +317,7 @@
                         </div>
 
                         <div class="mt-6">
-                            <button class="w-full rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</button>
+                            <a href="{{ route('nasabah.policies.show', $policy) }}" class="block w-full rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition text-center">Lihat Detail</a>
                         </div>
                     </div>
                 @endforeach

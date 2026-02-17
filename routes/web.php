@@ -115,6 +115,10 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/policies/{policy}/cancel', [\App\Http\Controllers\Nasabah\PolicyController::class, 'cancel'])
         ->middleware(['nasabah'])
         ->name('policies.cancel');
+    
+    Route::get('/policies/{policy}', [\App\Http\Controllers\Nasabah\PolicyController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('policies.show');
 
     // Claim routes
     Route::get('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'index'])
