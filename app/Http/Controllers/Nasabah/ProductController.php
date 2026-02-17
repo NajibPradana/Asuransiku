@@ -18,4 +18,18 @@ class ProductController extends Controller
 
         return view('frontend.nasabah.products', compact('products'));
     }
+
+    /**
+     * Display product detail for nasabah.
+     */
+    public function show(Product $product)
+    {
+        return view('frontend.nasabah.product-detail', [
+            'product' => $product,
+            'page_type' => 'product',
+            'productName' => $product->name,
+            'productCategory' => $product->category,
+            'productPrice' => number_format((float) $product->base_premium, 0, ',', '.'),
+        ]);
+    }
 }

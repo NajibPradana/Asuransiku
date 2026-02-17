@@ -27,7 +27,13 @@ class PolicyController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('frontend.nasabah.policies-overview', compact('activePolicies', 'pendingPolicies'));
+        $expiredPolicies = Policy::where('user_id', $userId)
+            ->where('status', 'expired')
+            ->with('product')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('frontend.nasabah.policies-overview', compact('activePolicies', 'pendingPolicies', 'expiredPolicies'));
     }
 
     /**

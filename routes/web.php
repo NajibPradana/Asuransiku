@@ -74,6 +74,9 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/products', [\App\Http\Controllers\Nasabah\ProductController::class, 'index'])
         ->middleware(['nasabah'])
         ->name('products');
+    Route::get('/products/{product:slug}', [\App\Http\Controllers\Nasabah\ProductController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('products.show');
 
     // Profile page for nasabah
     Route::get('/profile', [\App\Http\Controllers\Nasabah\ProfileController::class, 'show'])
