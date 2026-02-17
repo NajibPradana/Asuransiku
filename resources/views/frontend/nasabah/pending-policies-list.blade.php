@@ -62,8 +62,11 @@
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Lihat Detail</button>
-                        <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Batalkan</button>
+                        <a href="{{ route('nasabah.products.show', $policy->product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-center text-xs font-semibold text-slate-700">Lihat Detail</a>
+                        <form method="POST" action="{{ route('nasabah.policies.cancel', $policy) }}" class="flex-1 cancel-policy-form">
+                            @csrf
+                            <button type="submit" class="w-full rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Batalkan</button>
+                        </form>
                     </div>
                 </div>
             @empty
@@ -80,5 +83,32 @@
         </div>
     @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelForms = document.querySelectorAll('.cancel-policy-form');
+
+        cancelForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: 'Batalkan Pengajuan?',
+                    text: 'Pengajuan akan dibatalkan dan tidak bisa diproses lagi.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, batalkan',
+                    cancelButtonText: 'Kembali',
+                    confirmButtonColor: '#0f172a',
+                    cancelButtonColor: '#94a3b8',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
 
 @endsection

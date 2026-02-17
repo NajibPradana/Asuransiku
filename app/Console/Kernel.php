@@ -19,6 +19,12 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->withoutOverlapping()
             ->runInBackground();
+
+        // Expire active policies daily
+        $schedule->command('policies:expire')
+            ->dailyAt('00:10')
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

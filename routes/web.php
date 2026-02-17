@@ -75,9 +75,7 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::get('/products', [\App\Http\Controllers\Nasabah\ProductController::class, 'index'])
         ->middleware(['nasabah'])
         ->name('products');
-    
-    // Product detail page
-    Route::get('/products/{slug}', [\App\Http\Controllers\Nasabah\ProductController::class, 'show'])
+    Route::get('/products/{product:slug}', [\App\Http\Controllers\Nasabah\ProductController::class, 'show'])
         ->middleware(['nasabah'])
         ->name('products.show');
 
@@ -109,6 +107,9 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'store'])
         ->middleware(['nasabah', 'nasabah.profile'])
         ->name('policies.store');
+    Route::post('/policies/{policy}/cancel', [\App\Http\Controllers\Nasabah\PolicyController::class, 'cancel'])
+        ->middleware(['nasabah'])
+        ->name('policies.cancel');
 
     // Claim routes
     Route::get('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'index'])

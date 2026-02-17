@@ -8,6 +8,11 @@
             $categories[] = $product->category;
         }
     }
+    $activeProductNames = $activeProductNames ?? collect();
+    $selectedProduct = $selectedProduct ?? null;
+    $renewalFromPolicyId = $renewalFromPolicyId ?? null;
+    $oldCategory = old('category');
+    $oldProductId = old('product_id');
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -42,6 +47,9 @@
             @csrf
 
             <input type="hidden" name="user_id" value="{{ $user?->id }}">
+            @if ($renewalFromPolicyId)
+                <input type="hidden" name="renewal_from_policy_id" value="{{ $renewalFromPolicyId }}">
+            @endif
 
             <div class="grid gap-4">
                 <div>
@@ -49,7 +57,7 @@
                     <select name="category" id="category" required class="mt-1 block w-full rounded-md border-gray-200 shadow-sm" placeholder="Pilih kategori produk">
                         <option value="">-- Pilih Kategori --</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat }}">{{ ucfirst($cat) }}</option>
+                            <option value="{{ $cat }}" @selected($oldCategory === $cat)>{{ ucfirst($cat) }}</option>
                         @endforeach
                     </select>
                     @error('category')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
@@ -79,7 +87,12 @@
                 <input type="hidden" name="premium_paid" id="premium_paid" value="{{ old('premium_paid') }}">
 
                 <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                    Premi akan otomatis mengikuti standar produk terpilih. Status akan diset menjadi <strong>pending</strong> menunggu approval dari manager.
+                    Premi akan otomatis mengikuti standar produk terpilih.
+                    @if ($renewalFromPolicyId)
+                        Perpanjangan akan langsung <strong>aktif</strong> tanpa peninjauan ulang.
+                    @else
+                        Status akan diset menjadi <strong>pending</strong> menunggu approval dari manager.
+                    @endif
                 </div>
 
                 <div class="pt-4">
@@ -92,27 +105,15 @@
 
 <script>
     const productsData = @json($products ?? []);
+    const activeProductIds = new Set(@json(($activeProductIds ?? collect())->values()));
+    const selectedProduct = @json($selectedProduct);
+    const oldCategory = @json($oldCategory);
+    const oldProductId = @json($oldProductId);
     const categorySelect = document.getElementById('category');
     const productSelect = document.getElementById('product_id');
 
-    categorySelect.addEventListener('change', function() {
-        const selectedCategory = this.value;
-        productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
-
-        if (selectedCategory) {
-            const filteredProducts = productsData.filter(product => product.category === selectedCategory && product.is_active);
-            filteredProducts.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.name} — Rp${new Intl.NumberFormat('id-ID').format(product.base_premium)}`;
-                option.dataset.basePremium = product.base_premium;
-                productSelect.appendChild(option);
-            });
-        }
-    });
-
-    productSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
+    function updatePremiumFromSelection() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
         const premiumInput = document.getElementById('premium_paid');
 
         if (selectedOption && selectedOption.dataset.basePremium) {
@@ -120,7 +121,40 @@
         } else {
             premiumInput.value = '';
         }
+    }
+
+    function populateProducts(selectedCategory, preselectId = null) {
+        productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+
+        if (!selectedCategory) {
+            updatePremiumFromSelection();
+            return;
+        }
+
+        const filteredProducts = productsData.filter(product => product.category === selectedCategory && product.is_active);
+        filteredProducts.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.name} — Rp${new Intl.NumberFormat('id-ID').format(product.base_premium)}`;
+            option.dataset.basePremium = product.base_premium;
+                if (activeProductIds.has(product.id)) {
+                    option.textContent = `${product.name} — Sedang berlangganan`;
+                }
+            productSelect.appendChild(option);
+        });
+
+        if (preselectId) {
+            productSelect.value = String(preselectId);
+        }
+
+        updatePremiumFromSelection();
+    }
+
+    categorySelect.addEventListener('change', function() {
+        populateProducts(this.value);
     });
+
+    productSelect.addEventListener('change', updatePremiumFromSelection);
 
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
@@ -140,23 +174,25 @@
     }
 
     startDateInput.addEventListener('change', setEndDateFromStart);
-    document.addEventListener('DOMContentLoaded', setEndDateFromStart);
+    document.addEventListener('DOMContentLoaded', function() {
+        if (oldCategory) {
+            categorySelect.value = oldCategory;
+            populateProducts(categorySelect.value, oldProductId);
+        } else if (selectedProduct) {
+            categorySelect.value = selectedProduct.category || '';
+            populateProducts(categorySelect.value, selectedProduct.id);
+        }
+
+        if ((oldProductId || selectedProduct) && !startDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+        }
+
+        setEndDateFromStart();
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
-        @if (session('show_sweet_alert') && session('success'))
-            Swal.fire({
-                title: 'Pengajuan Berhasil!',
-                text: '{{ session('success') }}',
-                icon: 'success',
-                confirmButtonText: 'Kembali ke Dashboard',
-                confirmButtonColor: '#0f172a',
-                allowOutsideClick: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '{{ route('nasabah.dashboard') }}';
-                }
-            });
-        @endif
+        // Alerts handled globally in the nasabah layout.
     });
 </script>
 
