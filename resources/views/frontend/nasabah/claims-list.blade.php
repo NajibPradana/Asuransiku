@@ -28,7 +28,7 @@
     <div id="active-tab" class="tab-content">
         <div class="grid gap-4">
             @forelse($activeClaims as $claim)
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+                <a href="{{ route('nasabah.claims.show', $claim) }}" class="block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition hover:border-slate-300 group">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p class="text-sm font-semibold text-slate-900">{{ $claim->claim_number }}</p>
@@ -78,7 +78,7 @@
                             <p class="text-sm text-emerald-900">{{ optional($claim->paid_at)->format('d M Y H:i') ?? '-' }}</p>
                         </div>
                     @endif
-                </div>
+                </a>
             @empty
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
                     Belum ada klaim. Klik tombol "Ajukan Klaim" untuk membuat klaim baru.
@@ -91,7 +91,7 @@
     <div id="rejected-tab" class="tab-content hidden">
         <div class="grid gap-4">
             @forelse($rejectedClaims as $claim)
-                <div class="rounded-2xl border border-red-200 bg-red-50 p-5 hover:shadow-md transition">
+                <a href="{{ route('nasabah.claims.show', $claim) }}" class="block rounded-2xl border border-red-200 bg-red-50 p-5 hover:shadow-md transition hover:border-red-300 group">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p class="text-sm font-semibold text-slate-900">{{ $claim->claim_number }}</p>
@@ -129,7 +129,7 @@
                             <p class="text-sm text-red-900">{{ $claim->rejection_reason }}</p>
                         </div>
                     @endif
-                </div>
+                </a>
             @empty
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
                     Tidak ada klaim yang ditolak.
