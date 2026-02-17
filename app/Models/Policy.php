@@ -10,6 +10,7 @@ class Policy extends Model
         'policy_number',
         'user_id',
         'product_id',
+        'renewal_from_policy_id',
         'start_date',
         'end_date',
         'premium_paid',

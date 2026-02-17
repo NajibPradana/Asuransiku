@@ -38,7 +38,7 @@
             <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 class="text-lg font-semibold text-slate-900">Ajukan Polis</h2>
                 <p class="mt-2 text-sm text-slate-600">Mulai perlindungan dengan mengajukan polis sesuai kebutuhan Anda.</p>
-                <a href="{{ route('nasabah.policies.create') }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition">Ajukan Polis</a>
+                <a href="{{ route('nasabah.policies.create', ['product_id' => $product->id]) }}" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition">Ajukan Polis</a>
                 <div class="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-600">
                     Premi akan mengikuti standar produk terpilih saat pengajuan polis.
                 </div>

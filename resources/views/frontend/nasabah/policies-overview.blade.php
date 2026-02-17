@@ -159,7 +159,10 @@
 
                         <div class="mt-6 flex gap-3">
                             <a href="{{ route('nasabah.products.show', $policy->product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-center text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</a>
-                            <button class="flex-1 rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition">Batalkan</button>
+                            <form method="POST" action="{{ route('nasabah.policies.cancel', $policy) }}" class="flex-1 cancel-policy-form">
+                                @csrf
+                                <button type="submit" class="w-full rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 transition">Batalkan</button>
+                            </form>
                         </div>
                     </div>
                 @endforeach
@@ -219,7 +222,7 @@
 
                         <div class="mt-6 flex gap-3">
                             <a href="{{ route('nasabah.products.show', $policy->product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-center text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Lihat Detail</a>
-                            <a href="{{ route('nasabah.policies.create') }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-slate-800 transition">Perpanjang</a>
+                            <a href="{{ route('nasabah.policies.create', ['product_id' => $policy->product_id, 'renewal_from_policy_id' => $policy->id]) }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-center text-xs font-semibold text-white hover:bg-slate-800 transition">Perpanjang</a>
                         </div>
                     </div>
                 @endforeach
@@ -323,6 +326,33 @@
                         card.style.display = '';
                     } else {
                         card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelForms = document.querySelectorAll('.cancel-policy-form');
+
+        cancelForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: 'Batalkan Pengajuan?',
+                    text: 'Pengajuan akan dibatalkan dan tidak bisa diproses lagi.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, batalkan',
+                    cancelButtonText: 'Kembali',
+                    confirmButtonColor: '#0f172a',
+                    cancelButtonColor: '#94a3b8',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
                     }
                 });
             });
