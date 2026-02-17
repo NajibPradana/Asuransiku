@@ -107,9 +107,18 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'store'])
         ->middleware(['nasabah', 'nasabah.profile'])
         ->name('policies.store');
+    
+    Route::post('/policies/{policy}/renew', [\App\Http\Controllers\Nasabah\PolicyController::class, 'renew'])
+        ->middleware(['nasabah'])
+        ->name('policies.renew');
+    
     Route::post('/policies/{policy}/cancel', [\App\Http\Controllers\Nasabah\PolicyController::class, 'cancel'])
         ->middleware(['nasabah'])
         ->name('policies.cancel');
+    
+    Route::get('/policies/{policy}', [\App\Http\Controllers\Nasabah\PolicyController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('policies.show');
 
     // Claim routes
     Route::get('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'index'])
@@ -121,6 +130,9 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/claims', [\App\Http\Controllers\Nasabah\ClaimController::class, 'store'])
         ->middleware(['nasabah', 'nasabah.profile'])
         ->name('claims.store');
+    Route::get('/claims/{claim}', [\App\Http\Controllers\Nasabah\ClaimController::class, 'show'])
+        ->middleware(['nasabah'])
+        ->name('claims.show');
 });
 
 

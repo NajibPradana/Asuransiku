@@ -17,7 +17,6 @@ class PolicyController extends Controller
         $userId = auth('nasabah')->id() ?? auth()->id();
         $activePolicies = Policy::where('user_id', $userId)
             ->where('status', 'active')
-            ->whereDate('end_date', '>=', now()->toDateString())
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -29,18 +28,23 @@ class PolicyController extends Controller
             ->get();
 
         $expiredPolicies = Policy::where('user_id', $userId)
-            ->where(function ($query) {
-                $query->where('status', 'expired')
-                    ->orWhere(function ($subQuery) {
-                        $subQuery->where('status', 'active')
-                            ->whereDate('end_date', '<', now()->toDateString());
-                    });
-            })
+            ->where('status', 'expired')
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('frontend.nasabah.policies-overview', compact('activePolicies', 'pendingPolicies', 'expiredPolicies'));
+        $cancelledPolicies = Policy::where('user_id', $userId)
+            ->where('status', 'cancelled')
+            ->with('product')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('frontend.nasabah.policies-overview', compact(
+            'activePolicies',
+            'pendingPolicies',
+            'expiredPolicies',
+            'cancelledPolicies'
+        ));
     }
 
     /**
@@ -66,7 +70,6 @@ class PolicyController extends Controller
         $userId = auth('nasabah')->id() ?? auth()->id();
         $policies = Policy::where('user_id', $userId)
             ->where('status', 'active')
-            ->whereDate('end_date', '>=', now()->toDateString())
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -82,38 +85,17 @@ class PolicyController extends Controller
         $user = auth('nasabah')->user();
         $profile = $user?->nasabahProfile;
         $products = Product::where('is_active', true)->get();
-        $userId = auth('nasabah')->id() ?? auth()->id();
-        $activePolicies = Policy::where('user_id', $userId)
-            ->where('status', 'active')
-            ->whereDate('end_date', '>=', now()->toDateString())
-            ->with('product')
-            ->get();
-        $activeProductIds = $activePolicies->pluck('product_id')->unique()->values();
-        $activeProductNames = $activePolicies
-            ->pluck('product.name')
-            ->filter()
-            ->unique()
-            ->values();
+
         $selectedProduct = null;
-        $renewalFromPolicyId = null;
-        if ($request->filled('renewal_from_policy_id')) {
-            $renewalFromPolicyId = (int) $request->query('renewal_from_policy_id');
-            $renewalPolicy = Policy::where('id', $renewalFromPolicyId)
-                ->where('user_id', $userId)
-                ->where('status', 'expired')
+        $productIdParam = $request->query('product_id');
+        
+        if ($productIdParam) {
+            $selectedProduct = Product::where('id', (int) $productIdParam)
+                ->where('is_active', true)
                 ->first();
-            if ($renewalPolicy) {
-                $selectedProduct = $products->firstWhere('id', $renewalPolicy->product_id);
-            } else {
-                $renewalFromPolicyId = null;
-            }
         }
 
-        if (!$selectedProduct && $request->filled('product_id')) {
-            $selectedProduct = $products->firstWhere('id', (int) $request->query('product_id'));
-        }
-
-        return view('frontend.nasabah.apply-policy', compact('products', 'user', 'profile', 'activeProductIds', 'activeProductNames', 'selectedProduct', 'renewalFromPolicyId'));
+        return view('frontend.nasabah.apply-policy', compact('products', 'user', 'profile', 'selectedProduct'));
     }
 
     /**
@@ -124,48 +106,36 @@ class PolicyController extends Controller
         $validated = $request->validate([
             'category' => ['required', 'string'],
             'product_id' => ['required', 'exists:products,id'],
-            'renewal_from_policy_id' => ['nullable', 'integer', 'exists:policies,id'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'premium_paid' => ['required', 'numeric', 'min:0'],
         ]);
 
         $userId = auth('nasabah')->id() ?? auth()->id();
-        $productName = Product::whereKey($validated['product_id'])->value('name');
-        $pendingPolicy = Policy::where('user_id', $userId)
-            ->where('product_id', $validated['product_id'])
-            ->where('status', 'pending')
-            ->exists();
-        $activePolicy = Policy::where('user_id', $userId)
-            ->where('product_id', $validated['product_id'])
+        $productId = $validated['product_id'];
+
+        // Check if user already has an active policy with the same product
+        $existingActivePolicy = Policy::where('user_id', $userId)
+            ->where('product_id', $productId)
             ->where('status', 'active')
-            ->whereDate('end_date', '>=', now()->toDateString())
-            ->exists();
+            ->first();
 
-        $renewalPolicy = null;
-        if (!empty($validated['renewal_from_policy_id'])) {
-            $renewalPolicy = Policy::where('id', $validated['renewal_from_policy_id'])
-                ->where('user_id', $userId)
-                ->where('status', 'expired')
-                ->first();
-
-            if (!$renewalPolicy || (int) $renewalPolicy->product_id !== (int) $validated['product_id']) {
-                return back()
-                    ->withInput()
-                    ->with('error', 'Data perpanjangan tidak valid. Silakan ulangi dari halaman polis expired.')
-                    ->with('show_sweet_alert', true);
-            }
+        if ($existingActivePolicy) {
+            return back()->withErrors([
+                'product_id' => 'Anda sudah memiliki polis aktif untuk produk ini. Silakan perpanjang polis yang sudah ada atau tunggu hingga polis berakhir.',
+            ]);
         }
 
-        if ($pendingPolicy || $activePolicy) {
-            $message = $pendingPolicy
-                ? 'Pengajuan produk ' . ($productName ?: 'ini') . ' masih menunggu persetujuan. Silakan tunggu hasilnya sebelum mengajukan lagi.'
-                : 'Anda masih berlangganan produk ' . ($productName ?: 'ini') . '. Anda hanya bisa mengajukan kembali setelah polis berakhir.';
+        // Check if user already has a pending policy with the same product
+        $existingPendingPolicy = Policy::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->where('status', 'pending')
+            ->first();
 
-            return back()
-                ->withInput()
-                ->with('error', $message)
-                ->with('show_sweet_alert', true);
+        if ($existingPendingPolicy) {
+            return back()->withErrors([
+                'product_id' => 'Anda sudah memiliki pengajuan polis menunggu persetujuan untuk produk ini.',
+            ]);
         }
 
         // Remove category from data as it's only for validation/filtering
@@ -174,48 +144,111 @@ class PolicyController extends Controller
             ? \Illuminate\Support\Carbon::parse($data['start_date'])->addYear()->toDateString()
             : $data['end_date'];
 
-        $status = $renewalPolicy ? 'active' : 'pending';
-
         $policy = Policy::create(array_merge($data, [
             'user_id' => $userId,
-            'status' => $status,
-            'approved_at' => $status === 'active' ? now() : null,
-            'renewal_from_policy_id' => $renewalPolicy?->id,
+            'status' => 'pending',
         ]));
 
-        if ($renewalPolicy) {
-            $renewalPolicy->delete();
-        }
-
-        $successMessage = $status === 'active'
-            ? 'Perpanjangan polis berhasil dan sudah aktif.'
-            : 'Pengajuan polis berhasil dikirim menunggu persetujuan manager.';
-
         return redirect()->route('nasabah.policies')
-            ->with('success', $successMessage)
+            ->with('success', 'Pengajuan polis berhasil dikirim menunggu persetujuan manager.')
             ->with('show_sweet_alert', true);
     }
 
     /**
-     * Cancel a pending policy submission.
+     * Renew an expired policy
+     */
+    public function renew(Policy $policy)
+    {
+        $userId = auth('nasabah')->id() ?? auth()->id();
+
+        // Authorization check
+        if ($policy->user_id !== $userId) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Check if policy can be renewed
+        if (!$policy->canBeRenewed()) {
+            return back()->withErrors([
+                'error' => 'Polis tidak dapat diperpanjang. Polis harus sudah berakhir untuk dapat diperpanjang.',
+            ]);
+        }
+
+        // Check if there's already a renewal pending for this policy
+        $existingRenewal = Policy::where('renewal_from_policy_id', $policy->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingRenewal) {
+            return back()->withErrors([
+                'error' => 'Anda sudah memiliki pengajuan perpanjangan polis yang menunggu persetujuan.',
+            ]);
+        }
+
+        // Create new policy as renewal
+        $newStartDate = $policy->end_date->addDay();
+        $newEndDate = $newStartDate->clone()->addYear();
+
+        $renewalPolicy = Policy::create([
+            'user_id' => $userId,
+            'product_id' => $policy->product_id,
+            'renewal_from_policy_id' => $policy->id,
+            'start_date' => $newStartDate,
+            'end_date' => $newEndDate,
+            'premium_paid' => $policy->premium_paid,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('nasabah.policies')
+            ->with('success', 'Pengajuan perpanjangan polis berhasil dikirim menunggu persetujuan manager.')
+            ->with('show_sweet_alert', true);
+    }
+
+    /**
+     * Cancel a pending policy application
      */
     public function cancel(Policy $policy)
     {
         $userId = auth('nasabah')->id() ?? auth()->id();
 
+        // Authorization check
         if ($policy->user_id !== $userId) {
-            abort(403);
+            abort(403, 'Unauthorized');
         }
 
-        if ($policy->status !== 'pending') {
-            return back()->with('error', 'Pengajuan ini tidak bisa dibatalkan karena statusnya sudah berubah.');
+        // Check if policy is pending
+        if (!$policy->isPending()) {
+            return back()->withErrors([
+                'error' => 'Hanya polis yang masih menunggu persetujuan yang dapat dibatalkan.',
+            ]);
         }
 
+        // Update policy status to cancelled
         $policy->update([
             'status' => 'cancelled',
             'rejection_note' => 'Dibatalkan oleh nasabah',
         ]);
 
-        return back()->with('success', 'Pengajuan polis berhasil dibatalkan.');
+        return redirect()->route('nasabah.policies')
+            ->with('success', 'Pengajuan polis berhasil dibatalkan.')
+            ->with('show_sweet_alert', true);
+    }
+
+    /**
+     * Show policy details
+     */
+    public function show(Policy $policy)
+    {
+        $userId = auth('nasabah')->id() ?? auth()->id();
+
+        // Authorization check
+        if ($policy->user_id !== $userId) {
+            abort(403, 'Unauthorized');
+        }
+
+        $policy->load('product', 'claims');
+
+        return view('frontend.nasabah.policy-detail', [
+            'policy' => $policy,
+        ]);
     }
 }

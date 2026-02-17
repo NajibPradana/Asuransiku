@@ -15,13 +15,21 @@ class ClaimController extends Controller
     {
         $userId = Auth::guard('nasabah')->id();
 
-        $claims = Claim::where('user_id', $userId)
+        $activeClaims = Claim::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'review', 'approved', 'paid'])
+            ->with(['policy.product'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $rejectedClaims = Claim::where('user_id', $userId)
+            ->where('status', 'rejected')
             ->with(['policy.product'])
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('frontend.nasabah.claims-list', [
-            'claims' => $claims,
+            'activeClaims' => $activeClaims,
+            'rejectedClaims' => $rejectedClaims,
         ]);
     }
 
@@ -35,12 +43,20 @@ class ClaimController extends Controller
             ->orderBy('start_date', 'desc')
             ->get();
 
-        $selectedPolicyId = $request->query('policy_id');
-        $selectedPolicyId = $policies->firstWhere('id', (int) $selectedPolicyId)?->id;
+        $selectedPolicy = null;
+        $policyIdParam = $request->query('policy_id');
+        
+        if ($policyIdParam) {
+            $selectedPolicy = Policy::where('id', (int) $policyIdParam)
+                ->where('user_id', $userId)
+                ->where('status', 'active')
+                ->with('product')
+                ->first();
+        }
 
         return view('frontend.nasabah.claims-create', [
             'policies' => $policies,
-            'selectedPolicyId' => $selectedPolicyId,
+            'selectedPolicy' => $selectedPolicy,
         ]);
     }
 
@@ -85,5 +101,22 @@ class ClaimController extends Controller
             ->route('nasabah.claims')
             ->with('success', 'Pengajuan klaim berhasil dikirim. Tim kami akan memverifikasi dokumen Anda.')
             ->with('show_sweet_alert', true);
+    }
+
+    /**
+     * Display the specified claim.
+     */
+    public function show(Claim $claim)
+    {
+        $userId = Auth::guard('nasabah')->id();
+
+        // Authorization check
+        if ($claim->user_id !== $userId) {
+            abort(403);
+        }
+
+        $claim->load('policy.product', 'approvedBy');
+
+        return view('frontend.nasabah.claim-detail', compact('claim'));
     }
 }
