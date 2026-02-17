@@ -46,17 +46,17 @@
 
                         <div>
                             <p class="text-xs font-semibold uppercase text-slate-500">Premi Dibayar</p>
-                            <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($policy->premium_paid, 0) }}</p>
+                            <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</p>
                         </div>
 
                         <div>
                             <p class="text-xs font-semibold uppercase text-slate-500">Coverage</p>
-                            <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber(($policy->product->coverage_amount ?? 0), 0) }}</p>
+                            <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) ($policy->product->coverage_amount ?? 0), 0, ',', '.') }}</p>
                         </div>
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <a href="{{ route('nasabah.products.show', $policy->product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-center text-xs font-semibold text-slate-700">Lihat Detail</a>
+                        <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Lihat Detail</button>
                         <a href="{{ route('nasabah.claims.create', ['policy_id' => $policy->id]) }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white text-center">Ajukan Klaim</a>
                     </div>
                 </div>

@@ -18,27 +18,12 @@
                         <p class="text-sm font-semibold text-slate-900">{{ $claim->claim_number }}</p>
                         <p class="text-xs text-slate-500">{{ $claim->policy?->policy_number }} · {{ $claim->policy?->product?->name }}</p>
                     </div>
-                    @php
-                        $statusColors = [
-                            'pending' => 'bg-amber-100 text-amber-700',
-                            'review' => 'bg-blue-100 text-blue-700',
-                            'approved' => 'bg-emerald-100 text-emerald-700',
-                            'rejected' => 'bg-red-100 text-red-700',
-                            'paid' => 'bg-emerald-100 text-emerald-700',
-                        ];
-                        $statusLabels = [
-                            'pending' => 'Menunggu',
-                            'review' => 'Dalam Review',
-                            'approved' => 'Disetujui',
-                            'rejected' => 'Ditolak',
-                            'paid' => 'Dibayar',
-                        ];
-                        $statusColor = $statusColors[$claim->status] ?? 'bg-slate-100 text-slate-700';
-                        $statusLabel = $statusLabels[$claim->status] ?? ucfirst($claim->status);
-                    @endphp
                     <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
-                        {{ $statusColor }}">
-                        {{ $statusLabel }}
+                        @if($claim->status === 'approved') bg-emerald-100 text-emerald-700
+                        @elseif($claim->status === 'rejected') bg-red-100 text-red-700
+                        @elseif($claim->status === 'review') bg-blue-100 text-blue-700
+                        @else bg-amber-100 text-amber-700 @endif">
+                        {{ ucfirst($claim->status) }}
                     </span>
                 </div>
                 <div class="mt-4 grid gap-3 md:grid-cols-3 text-sm text-slate-600">
@@ -48,11 +33,11 @@
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase text-slate-500">Nominal Klaim</p>
-                        <p class="text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($claim->amount_claimed, 0) }}</p>
+                        <p class="text-slate-900">Rp{{ number_format((float) $claim->amount_claimed, 0, ',', '.') }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase text-slate-500">Nominal Disetujui</p>
-                        <p class="text-slate-900">{{ $claim->amount_approved ? 'Rp' . \App\Support\NumberFormatter::formatNumber($claim->amount_approved, 0) : '-' }}</p>
+                        <p class="text-slate-900">{{ $claim->amount_approved ? 'Rp' . number_format((float) $claim->amount_approved, 0, ',', '.') : '-' }}</p>
                     </div>
                 </div>
                 @if($claim->status === 'rejected' && $claim->rejection_reason)

@@ -36,7 +36,7 @@
         {{-- Kanan: Harga --}}
         <div class="text-right whitespace-nowrap">
             <p class="text-sm font-medium text-slate-900 dark:text-white">
-                Rp {{ \App\Support\NumberFormatter::formatNumber($item->sub_total, 0) }}
+                Rp {{ number_format($item->sub_total, 0, ',', '.') }}
             </p>
         </div>
     </div>

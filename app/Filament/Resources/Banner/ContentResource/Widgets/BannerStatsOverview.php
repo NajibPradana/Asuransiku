@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Banner\ContentResource\Widgets;
 
 use App\Models\Banner\Category;
 use App\Models\Banner\Content;
-use App\Support\NumberFormatter;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -27,8 +26,7 @@ class BannerStatsOverview extends BaseWidget
         // Get total impressions and clicks
         $totalImpressions = Content::sum('impression_count');
         $totalClicks = Content::sum('click_count');
-        $ctr = $totalImpressions > 0 ? ($totalClicks / $totalImpressions) * 100 : 0;
-        $ctrFormatted = NumberFormatter::formatNumber($ctr, 2);
+        $ctr = $totalImpressions > 0 ? round(($totalClicks / $totalImpressions) * 100, 2) : 0;
 
         // Get scheduled banners
         $scheduledBanners = Content::whereNotNull('start_date')
@@ -53,8 +51,8 @@ class BannerStatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-folder')
                 ->color('primary'),
 
-            Stat::make('Total Impressions', NumberFormatter::formatNumber($totalImpressions, 0))
-                ->description('CTR: ' . $ctrFormatted . '%')
+            Stat::make('Total Impressions', number_format($totalImpressions, 0, '.', ','))
+                ->description('CTR: ' . $ctr . '%')
                 ->descriptionIcon('heroicon-m-cursor-arrow-rays')
                 ->color($ctr > 2 ? 'success' : 'warning'),
 

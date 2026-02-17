@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
-use App\Support\NumberFormatter;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -163,13 +162,13 @@ class ProductResource extends Resource implements HasShieldPermissions
                     ->label('Base Premium')
                     ->sortable()
                     ->alignRight()
-                    ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2))
+                    ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ','))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('coverage_amount')
                     ->label('Coverage Amount')
                     ->sortable()
                     ->alignRight()
-                    ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2))
+                    ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ','))
                     ->toggleable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Aktif')
@@ -223,10 +222,10 @@ class ProductResource extends Resource implements HasShieldPermissions
                             ->markdown(),
                         Infolists\Components\TextEntry::make('base_premium')
                             ->label('Base Premium')
-                            ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2)),
+                            ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ',')),
                         Infolists\Components\TextEntry::make('coverage_amount')
                             ->label('Coverage Amount')
-                            ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2)),
+                            ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ',')),
                         Infolists\Components\IconEntry::make('is_active')
                             ->label('Aktif')
                             ->boolean(),
