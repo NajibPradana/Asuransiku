@@ -80,13 +80,22 @@ class PolicyController extends Controller
     /**
      * Show application form for a new policy.
      */
-    public function create()
+    public function create(Request $request)
     {
         $user = auth('nasabah')->user();
         $profile = $user?->nasabahProfile;
         $products = Product::where('is_active', true)->get();
 
-        return view('frontend.nasabah.apply-policy', compact('products', 'user', 'profile'));
+        $selectedProduct = null;
+        $productIdParam = $request->query('product_id');
+        
+        if ($productIdParam) {
+            $selectedProduct = Product::where('id', (int) $productIdParam)
+                ->where('is_active', true)
+                ->first();
+        }
+
+        return view('frontend.nasabah.apply-policy', compact('products', 'user', 'profile', 'selectedProduct'));
     }
 
     /**

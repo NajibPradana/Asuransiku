@@ -81,7 +81,7 @@
                         <div>
                             <h3 class="text-lg font-bold text-gray-900 mb-2">Tertarik dengan produk ini?</h3>
                             <p class="text-sm text-gray-600 mb-4">Ajukan polis sekarang untuk mendapatkan perlindungan.</p>
-                            <a href="{{ route('nasabah.policies.create') }}" class="block w-full bg-black text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-800 transition">
+                            <a href="{{ route('nasabah.policies.create', ['product_id' => $product->id]) }}" class="block w-full bg-black text-white font-bold py-3 px-4 rounded-lg text-center hover:bg-gray-800 transition">
                                 Ajukan Polis
                             </a>
                         </div>

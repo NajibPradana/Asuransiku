@@ -43,12 +43,20 @@ class ClaimController extends Controller
             ->orderBy('start_date', 'desc')
             ->get();
 
-        $selectedPolicyId = $request->query('policy_id');
-        $selectedPolicyId = $policies->firstWhere('id', (int) $selectedPolicyId)?->id;
+        $selectedPolicy = null;
+        $policyIdParam = $request->query('policy_id');
+        
+        if ($policyIdParam) {
+            $selectedPolicy = Policy::where('id', (int) $policyIdParam)
+                ->where('user_id', $userId)
+                ->where('status', 'active')
+                ->with('product')
+                ->first();
+        }
 
         return view('frontend.nasabah.claims-create', [
             'policies' => $policies,
-            'selectedPolicyId' => $selectedPolicyId,
+            'selectedPolicy' => $selectedPolicy,
         ]);
     }
 

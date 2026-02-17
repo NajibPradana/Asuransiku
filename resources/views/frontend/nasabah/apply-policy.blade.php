@@ -13,13 +13,20 @@
     $renewalFromPolicyId = $renewalFromPolicyId ?? null;
     $oldCategory = old('category');
     $oldProductId = old('product_id');
+    $hasPreselectedProduct = $selectedProduct !== null;
 @endphp
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container mx-auto px-6 py-12">
     <div class="max-w-3xl mx-auto bg-white rounded-2xl p-6 shadow">
-        <h1 class="text-2xl font-semibold mb-4">Ajukan Polis Baru</h1>
+        <h1 class="text-2xl font-semibold mb-4">
+            @if($hasPreselectedProduct)
+                Lanjutkan Pengajuan Polis
+            @else
+                Ajukan Polis Baru
+            @endif
+        </h1>
 
         <div class="mb-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
             <p class="text-sm font-semibold text-slate-900">Ringkasan Profil Nasabah</p>
@@ -52,6 +59,7 @@
             @endif
 
             <div class="grid gap-4">
+                @if(!$hasPreselectedProduct)
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Kategori Produk <span class="text-red-500">*</span></label>
                     <select name="category" id="category" required class="mt-1 block w-full rounded-md border-gray-200 shadow-sm" placeholder="Pilih kategori produk">
@@ -70,6 +78,35 @@
                     </select>
                     @error('product_id')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                 </div>
+                @else
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
+                    <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Produk Terpilih</p>
+                    <div class="grid gap-3">
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Nama Produk</p>
+                            <p class="text-slate-900 font-medium">{{ $selectedProduct->name }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-slate-500">Kategori</p>
+                                <p class="text-slate-900 font-medium">{{ ucfirst($selectedProduct->category) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-slate-500">Coverage</p>
+                                <p class="text-slate-900 font-medium">Rp{{ number_format($selectedProduct->coverage_amount, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase text-slate-500">Premi Tahunan</p>
+                            <p class="text-slate-900 font-medium">Rp{{ number_format($selectedProduct->base_premium, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="product_id" value="{{ $selectedProduct->id }}">
+                    <p class="mt-3 text-xs text-slate-500">
+                        <a href="{{ route('nasabah.policies.create') }}" class="text-slate-700 font-semibold hover:underline">Pilih produk lain</a>
+                    </p>
+                </div>
+                @endif
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -84,7 +121,7 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="premium_paid" id="premium_paid" value="{{ old('premium_paid') }}">
+                <input type="hidden" name="premium_paid" id="premium_paid" value="{{ old('premium_paid', $selectedProduct?->base_premium) }}">
 
                 <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
                     Premi akan otomatis mengikuti standar produk terpilih.
@@ -109,53 +146,67 @@
     const selectedProduct = @json($selectedProduct);
     const oldCategory = @json($oldCategory);
     const oldProductId = @json($oldProductId);
-    const categorySelect = document.getElementById('category');
-    const productSelect = document.getElementById('product_id');
+    const hasPreselectedProduct = selectedProduct !== null;
 
-    function updatePremiumFromSelection() {
-        const selectedOption = productSelect.options[productSelect.selectedIndex];
-        const premiumInput = document.getElementById('premium_paid');
+    // Only setup dropdowns if no product is pre-selected
+    if (!hasPreselectedProduct) {
+        const categorySelect = document.getElementById('category');
+        const productSelect = document.getElementById('product_id');
 
-        if (selectedOption && selectedOption.dataset.basePremium) {
-            premiumInput.value = selectedOption.dataset.basePremium;
-        } else {
-            premiumInput.value = '';
+        function updatePremiumFromSelection() {
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const premiumInput = document.getElementById('premium_paid');
+
+            if (selectedOption && selectedOption.dataset.basePremium) {
+                premiumInput.value = selectedOption.dataset.basePremium;
+            } else {
+                premiumInput.value = '';
+            }
         }
-    }
 
-    function populateProducts(selectedCategory, preselectId = null) {
-        productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
+        function populateProducts(selectedCategory, preselectId = null) {
+            productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
 
-        if (!selectedCategory) {
+            if (!selectedCategory) {
+                updatePremiumFromSelection();
+                return;
+            }
+
+            const filteredProducts = productsData.filter(product => product.category === selectedCategory && product.is_active);
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} — Rp${new Intl.NumberFormat('id-ID').format(product.base_premium)}`;
+                option.dataset.basePremium = product.base_premium;
+                    if (activeProductIds.has(product.id)) {
+                        option.textContent = `${product.name} — Sedang berlangganan`;
+                    }
+                productSelect.appendChild(option);
+            });
+
+            if (preselectId) {
+                productSelect.value = String(preselectId);
+            }
+
             updatePremiumFromSelection();
-            return;
         }
 
-        const filteredProducts = productsData.filter(product => product.category === selectedCategory && product.is_active);
-        filteredProducts.forEach(product => {
-            const option = document.createElement('option');
-            option.value = product.id;
-            option.textContent = `${product.name} — Rp${new Intl.NumberFormat('id-ID').format(product.base_premium)}`;
-            option.dataset.basePremium = product.base_premium;
-                if (activeProductIds.has(product.id)) {
-                    option.textContent = `${product.name} — Sedang berlangganan`;
-                }
-            productSelect.appendChild(option);
+        categorySelect.addEventListener('change', function() {
+            populateProducts(this.value);
         });
 
-        if (preselectId) {
-            productSelect.value = String(preselectId);
-        }
+        productSelect.addEventListener('change', updatePremiumFromSelection);
 
-        updatePremiumFromSelection();
+        // Restore form state on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (oldCategory) {
+                categorySelect.value = oldCategory;
+                populateProducts(categorySelect.value, oldProductId);
+            }
+        });
     }
 
-    categorySelect.addEventListener('change', function() {
-        populateProducts(this.value);
-    });
-
-    productSelect.addEventListener('change', updatePremiumFromSelection);
-
+    // Date handling (same for both cases)
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
 
@@ -174,25 +225,19 @@
     }
 
     startDateInput.addEventListener('change', setEndDateFromStart);
+    
     document.addEventListener('DOMContentLoaded', function() {
-        if (oldCategory) {
-            categorySelect.value = oldCategory;
-            populateProducts(categorySelect.value, oldProductId);
-        } else if (selectedProduct) {
-            categorySelect.value = selectedProduct.category || '';
-            populateProducts(categorySelect.value, selectedProduct.id);
-        }
-
-        if ((oldProductId || selectedProduct) && !startDateInput.value) {
+        // Set default date and end date if pre-selected product
+        if (hasPreselectedProduct && !startDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+            setEndDateFromStart();
+        } else if (!hasPreselectedProduct && (oldProductId || selectedProduct) && !startDateInput.value) {
             const today = new Date().toISOString().split('T')[0];
             startDateInput.value = today;
         }
 
         setEndDateFromStart();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Alerts handled globally in the nasabah layout.
     });
 </script>
 
