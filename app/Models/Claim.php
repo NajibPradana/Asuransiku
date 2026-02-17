@@ -18,13 +18,15 @@ class Claim extends Model
         'status',
         'rejection_reason',
         'approved_by',
-        'approved_at'
+        'approved_at',
+        'paid_at'
     ];
 
     protected $casts = [
         'incident_date' => 'date',
         'evidence_files' => 'array',
         'approved_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     public function policy()

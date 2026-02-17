@@ -134,7 +134,6 @@ class PolicyResource extends Resource implements HasShieldPermissions
                     ->sortable(),
                 Tables\Columns\TextColumn::make('approvedBy.fullname')
                     ->label('Approve By')
-                    ->formatStateUsing(fn(?string $state, Policy $record): string => $state ?: ($record->approved_at ? 'System' : '-'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('approved_at')
                     ->label('Approve At')

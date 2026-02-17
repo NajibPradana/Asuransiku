@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <a href="{{ route('nasabah.products.show', $policy->product->slug) }}" class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-center text-xs font-semibold text-slate-700">Lihat Detail</a>
+                        <button class="flex-1 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700">Lihat Detail</button>
                         <a href="{{ route('nasabah.claims.create', ['policy_id' => $policy->id]) }}" class="flex-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold text-white text-center">Ajukan Klaim</a>
                     </div>
                 </div>

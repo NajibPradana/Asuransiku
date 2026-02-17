@@ -45,7 +45,7 @@ class TopPerformingBanners extends BaseTableWidget
                     ->formatStateUsing(
                         fn(Content $record): string =>
                         $record->impression_count > 0
-                        ? number_format(($record->click_count / $record->impression_count) * 100, 2) . '%'
+                        ? number_format(($record->click_count / $record->impression_count) * 100, 2, '.', ',') . '%'
                         : '0.00%'
                     )
                     ->sortable(query: function ($query, $direction) {

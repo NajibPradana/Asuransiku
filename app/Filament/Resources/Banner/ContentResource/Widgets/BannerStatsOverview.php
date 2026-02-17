@@ -51,7 +51,7 @@ class BannerStatsOverview extends BaseWidget
                 ->descriptionIcon('heroicon-m-folder')
                 ->color('primary'),
 
-            Stat::make('Total Impressions', number_format($totalImpressions))
+            Stat::make('Total Impressions', number_format($totalImpressions, 0, '.', ','))
                 ->description('CTR: ' . $ctr . '%')
                 ->descriptionIcon('heroicon-m-cursor-arrow-rays')
                 ->color($ctr > 2 ? 'success' : 'warning'),
