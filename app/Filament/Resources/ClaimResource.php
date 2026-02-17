@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClaimResource\Pages;
 use App\Models\Claim;
+use App\Support\NumberFormatter;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -121,7 +122,7 @@ class ClaimResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('amount_claimed')
                     ->label('Nominal Klaim')
                     ->alignRight()
-                    ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ','))
+                    ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -190,7 +191,7 @@ class ClaimResource extends Resource implements HasShieldPermissions
                                     Forms\Components\Placeholder::make('amount_claimed')
                                         ->label('Nominal Klaim')
                                         ->content($record->amount_claimed !== null
-                                            ? 'Rp' . number_format((float) $record->amount_claimed, 2, '.', ',')
+                                            ? 'Rp' . NumberFormatter::formatNumber($record->amount_claimed, 2)
                                             : '-'),
                                     Forms\Components\Placeholder::make('description')
                                         ->label('Deskripsi')
@@ -216,6 +217,28 @@ class ClaimResource extends Resource implements HasShieldPermissions
 
                         Notification::make()
                             ->title('Klaim disetujui')
+                            ->success()
+                            ->send();
+                    }),
+                Tables\Actions\Action::make('markPaid')
+                    ->label('Tandai Paid')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->visible(function (Claim $record): bool {
+                        $user = Auth::user();
+
+                        return $record->status === 'approved'
+                            && $user
+                            && $user->hasAnyRole(['admin', 'manager']);
+                    })
+                    ->requiresConfirmation()
+                    ->action(function (Claim $record): void {
+                        $record->update([
+                            'status' => 'paid',
+                        ]);
+
+                        Notification::make()
+                            ->title('Klaim ditandai sebagai paid')
                             ->success()
                             ->send();
                     }),
@@ -270,10 +293,10 @@ class ClaimResource extends Resource implements HasShieldPermissions
                             ->label('Produk'),
                         Infolists\Components\TextEntry::make('amount_claimed')
                             ->label('Nominal Klaim')
-                            ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ',')),
+                            ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2)),
                         Infolists\Components\TextEntry::make('amount_approved')
                             ->label('Nominal Disetujui')
-                            ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ','))
+                            ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2))
                             ->default('-'),
                         Infolists\Components\TextEntry::make('status')
                             ->label('Status')

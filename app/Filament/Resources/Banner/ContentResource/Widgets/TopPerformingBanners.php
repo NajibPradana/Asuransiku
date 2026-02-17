@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Banner\ContentResource\Widgets;
 
 use App\Models\Banner\Content;
+use App\Support\NumberFormatter;
 use Filament\Widgets\TableWidget as BaseTableWidget;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -45,8 +46,8 @@ class TopPerformingBanners extends BaseTableWidget
                     ->formatStateUsing(
                         fn(Content $record): string =>
                         $record->impression_count > 0
-                        ? number_format(($record->click_count / $record->impression_count) * 100, 2) . '%'
-                        : '0.00%'
+                        ? NumberFormatter::formatNumber(($record->click_count / $record->impression_count) * 100, 2) . '%'
+                        : '0,00%'
                     )
                     ->sortable(query: function ($query, $direction) {
                         return $query->orderByRaw('click_count / impression_count ' . $direction);

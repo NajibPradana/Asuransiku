@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Banner;
 use App\Filament\Resources\Banner\ContentResource\Pages;
 use App\Models\Banner\Category;
 use App\Models\Banner\Content;
+use App\Support\NumberFormatter;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -235,18 +236,18 @@ class ContentResource extends Resource implements HasShieldPermissions
                                     ->schema([
                                         Forms\Components\Placeholder::make('impression_count')
                                             ->label('Impressions')
-                                            ->content(fn(Content $record): string => number_format($record->impression_count ?? 0)),
+                                            ->content(fn(Content $record): string => NumberFormatter::formatNumber($record->impression_count ?? 0, 0)),
                                         Forms\Components\Placeholder::make('click_count')
                                             ->label('Clicks')
-                                            ->content(fn(Content $record): string => number_format($record->click_count ?? 0)),
+                                            ->content(fn(Content $record): string => NumberFormatter::formatNumber($record->click_count ?? 0, 0)),
                                         Forms\Components\Placeholder::make('ctr')
                                             ->label('CTR (Click Through Rate)')
                                             ->content(function (Content $record): string {
                                                 if (($record->impression_count ?? 0) > 0) {
                                                     $ctr = ($record->click_count / $record->impression_count) * 100;
-                                                    return number_format($ctr, 2) . '%';
+                                                    return NumberFormatter::formatNumber($ctr, 2) . '%';
                                                 }
-                                                return '0.00%';
+                                                return '0,00%';
                                             }),
                                     ])
                                     ->compact()

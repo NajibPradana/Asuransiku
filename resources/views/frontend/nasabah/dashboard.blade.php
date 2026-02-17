@@ -198,7 +198,7 @@
                                 <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                     <div>
                                         <p class="text-sm font-semibold text-slate-800">Nominal Klaim</p>
-                                        <p class="text-xs text-slate-500">Rp{{ number_format((float) $latestClaim->amount_claimed, 0, ',', '.') }}</p>
+                                        <p class="text-xs text-slate-500">Rp{{ \App\Support\NumberFormatter::formatNumber($latestClaim->amount_claimed, 0) }}</p>
                                     </div>
                                     <span class="text-xs font-semibold text-slate-600">{{ $statusLabel }}</span>
                                 </div>
@@ -258,11 +258,11 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Premi</span>
-                                    <span class="text-sm font-semibold text-slate-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</span>
+                                    <span class="text-sm font-semibold text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($policy->premium_paid, 0) }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Coverage</span>
-                                    <span class="text-sm font-semibold text-slate-900">Rp{{ number_format((float) ($policy->product->coverage_amount ?? 0), 0, ',', '.') }}</span>
+                                    <span class="text-sm font-semibold text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber(($policy->product->coverage_amount ?? 0), 0) }}</span>
                                 </div>
                             </div>
                             <div class="mt-6 flex gap-2">

@@ -6,6 +6,7 @@ use App\Filament\Resources\PolicyResource\Pages;
 use App\Models\Policy;
 use App\Models\Product;
 use App\Models\User;
+use App\Support\NumberFormatter;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -119,7 +120,7 @@ class PolicyResource extends Resource implements HasShieldPermissions
                     ->label('Premi')
                     ->alignRight()
                     ->sortable()
-                    ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ',')),
+                    ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2)),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -233,7 +234,7 @@ class PolicyResource extends Resource implements HasShieldPermissions
                             ->formatStateUsing(fn(?string $state): string => $state ? ucfirst($state) : '-'),
                         Infolists\Components\TextEntry::make('premium_paid')
                             ->label('Premi')
-                            ->formatStateUsing(fn($state): string => number_format((float) $state, 2, '.', ',')),
+                            ->formatStateUsing(fn($state): string => NumberFormatter::formatNumber($state, 2)),
                         Infolists\Components\TextEntry::make('status')
                             ->label('Status')
                             ->formatStateUsing(fn(string $state): string => ucfirst($state)),

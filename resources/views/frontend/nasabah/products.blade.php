@@ -23,11 +23,11 @@
                 <div class="mt-6 grid gap-3">
                     <div class="flex items-center justify-between text-sm text-slate-600">
                         <span>Premi Dasar</span>
-                        <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->base_premium, 0, ',', '.') }}</span>
+                        <span class="font-semibold text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($product->base_premium, 0) }}</span>
                     </div>
                     <div class="flex items-center justify-between text-sm text-slate-600">
                         <span>Coverage</span>
-                        <span class="font-semibold text-slate-900">Rp{{ number_format((float) $product->coverage_amount, 0, ',', '.') }}</span>
+                        <span class="font-semibold text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($product->coverage_amount, 0) }}</span>
                     </div>
                 </div>
 

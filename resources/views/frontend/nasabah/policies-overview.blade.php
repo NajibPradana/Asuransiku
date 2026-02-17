@@ -89,12 +89,12 @@
 
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Premi Dibayar</p>
-                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</p>
+                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($policy->premium_paid, 0) }}</p>
                             </div>
 
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Coverage</p>
-                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) ($policy->product->coverage_amount ?? 0), 0, ',', '.') }}</p>
+                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber(($policy->product->coverage_amount ?? 0), 0) }}</p>
                             </div>
                         </div>
 
@@ -142,12 +142,12 @@
 
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Premi Dibayar</p>
-                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) $policy->premium_paid, 0, ',', '.') }}</p>
+                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber($policy->premium_paid, 0) }}</p>
                             </div>
 
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Coverage</p>
-                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ number_format((float) ($policy->product->coverage_amount ?? 0), 0, ',', '.') }}</p>
+                                <p class="mt-1 text-sm font-medium text-slate-900">Rp{{ \App\Support\NumberFormatter::formatNumber(($policy->product->coverage_amount ?? 0), 0) }}</p>
                             </div>
 
                             <div class="rounded-full bg-amber-50 border border-amber-200 px-4 py-3">

@@ -135,11 +135,11 @@
                 <div class="space-y-3 mb-6">
                     <div class="flex justify-between items-center py-2 border-b border-slate-100">
                         <span class="text-sm text-slate-600">Batas Pertanggungan</span>
-                        <span class="text-sm font-semibold text-slate-900">Rp {{ number_format($product->coverage_amount, 0, ',', '.') }}</span>
+                        <span class="text-sm font-semibold text-slate-900">Rp {{ \App\Support\NumberFormatter::formatNumber($product->coverage_amount, 0) }}</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-slate-100">
                         <span class="text-sm text-slate-600">Premi per Tahun</span>
-                        <span class="text-sm font-semibold text-emerald-600">Rp {{ number_format($product->base_premium, 0, ',', '.') }}</span>
+                        <span class="text-sm font-semibold text-emerald-600">Rp {{ \App\Support\NumberFormatter::formatNumber($product->base_premium, 0) }}</span>
                     </div>
                 </div>
                 
