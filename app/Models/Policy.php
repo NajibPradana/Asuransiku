@@ -46,6 +46,56 @@ class Policy extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    public function renewalFrom()
+    {
+        return $this->belongsTo(Policy::class, 'renewal_from_policy_id');
+    }
+
+    public function renewals()
+    {
+        return $this->hasMany(Policy::class, 'renewal_from_policy_id');
+    }
+
+    /**
+     * Check if policy is expired
+     */
+    public function isExpired()
+    {
+        return $this->status === 'expired' || $this->end_date->isPast();
+    }
+
+    /**
+     * Check if policy can be renewed
+     */
+    public function canBeRenewed()
+    {
+        return $this->isExpired();
+    }
+
+    /**
+     * Check if policy is active
+     */
+    public function isActive()
+    {
+        return $this->status === 'active' && $this->end_date->isFuture();
+    }
+
+    /**
+     * Check if policy is pending approval
+     */
+    public function isPending()
+    {
+        return $this->status === 'pending';
+    }
+
+    /**
+     * Check if policy is cancelled/rejected
+     */
+    public function isCancelled()
+    {
+        return $this->status === 'cancelled';
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {

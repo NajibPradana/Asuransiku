@@ -15,13 +15,21 @@ class ClaimController extends Controller
     {
         $userId = Auth::guard('nasabah')->id();
 
-        $claims = Claim::where('user_id', $userId)
+        $activeClaims = Claim::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'review', 'approved', 'paid'])
+            ->with(['policy.product'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $rejectedClaims = Claim::where('user_id', $userId)
+            ->where('status', 'rejected')
             ->with(['policy.product'])
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('frontend.nasabah.claims-list', [
-            'claims' => $claims,
+            'activeClaims' => $activeClaims,
+            'rejectedClaims' => $rejectedClaims,
         ]);
     }
 

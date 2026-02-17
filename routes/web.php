@@ -107,6 +107,11 @@ Route::prefix('nasabah')->name('nasabah.')->group(function () {
     Route::post('/policies', [\App\Http\Controllers\Nasabah\PolicyController::class, 'store'])
         ->middleware(['nasabah', 'nasabah.profile'])
         ->name('policies.store');
+    
+    Route::post('/policies/{policy}/renew', [\App\Http\Controllers\Nasabah\PolicyController::class, 'renew'])
+        ->middleware(['nasabah'])
+        ->name('policies.renew');
+    
     Route::post('/policies/{policy}/cancel', [\App\Http\Controllers\Nasabah\PolicyController::class, 'cancel'])
         ->middleware(['nasabah'])
         ->name('policies.cancel');
