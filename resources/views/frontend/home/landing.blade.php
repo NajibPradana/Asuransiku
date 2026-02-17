@@ -158,8 +158,8 @@
             </p>
         </div>
         
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Service Card 1 -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Service Card 1: Asuransi Kendaraan -->
             <div class="nims-card rounded-3xl p-8">
                 <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-blue-600">
@@ -168,9 +168,9 @@
                 </div>
                 <h3 class="text-2xl font-semibold text-slate-900 mb-3">Asuransi Kendaraan</h3>
                 <p class="text-slate-600 leading-relaxed mb-6">
-                    Lindungi kendaraan Anda dari risiko kecelakaan, pencurian, dan kerusakan dengan premi yang kompetitif dan klaim yang cepat.
+                    Lindungi kendaraan Anda dari risiko kecelakaan, pencurian, dan kerusakan dengan premi kompetitif dan klaim cepat.
                 </p>
-                <a href="/nasabah" class="inline-flex items-center text-sm font-semibold text-slate-900">
+                <a href="{{ route('home.service.detail', 'kendaraan') }}" class="inline-flex items-center text-sm font-semibold text-slate-900">
                     Pelajari Lebih Lanjut
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -178,29 +178,10 @@
                 </a>
             </div>
 
-            <!-- Service Card 2 -->
+            <!-- Service Card 2: Asuransi Kesehatan -->
             <div class="nims-card rounded-3xl p-8">
                 <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-emerald-600">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205l3 1m1.5.5l-1.5-.5M6.75 7.364V3h-3v18m3-13.636l10.5-3.819" />
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-semibold text-slate-900 mb-3">Asuransi Properti</h3>
-                <p class="text-slate-600 leading-relaxed mb-6">
-                    Lindungi rumah dan properti Anda dari risiko kebakaran, banjir, gempa, dan bencana alam lainnya dengan coverage menyeluruh.
-                </p>
-                <a href="/nasabah" class="inline-flex items-center text-sm font-semibold text-slate-900">
-                    Pelajari Lebih Lanjut
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                </a>
-            </div>
-
-            <!-- Service Card 3 -->
-            <div class="nims-card rounded-3xl p-8">
-                <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-amber-600">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </div>
@@ -208,7 +189,46 @@
                 <p class="text-slate-600 leading-relaxed mb-6">
                     Dapatkan perlindungan kesehatan terbaik untuk Anda dan keluarga dengan cakupan rawat inap, rawat jalan, dan operasi.
                 </p>
-                <a href="/nasabah" class="inline-flex items-center text-sm font-semibold text-slate-900">
+                <a href="{{ route('home.service.detail', 'kesehatan') }}" class="inline-flex items-center text-sm font-semibold text-slate-900">
+                    Pelajari Lebih Lanjut
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Service Card 3: Asuransi Perjalanan -->
+            <div class="nims-card rounded-3xl p-8">
+                <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-amber-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-3">Asuransi Perjalanan</h3>
+                <p class="text-slate-600 leading-relaxed mb-6">
+                    Perlindungan menyeluruh untuk perjalanan domestik maupun internasional, termasuk kecelakaan dan keterlambatan jadwal.
+                </p>
+                <a href="{{ route('home.service.detail', 'perjalanan') }}" class="inline-flex items-center text-sm font-semibold text-slate-900">
+                    Pelajari Lebih Lanjut
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Service Card 4: Asuransi Jiwa -->
+            <div class="nims-card rounded-3xl p-8">
+                <div class="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-rose-600">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3 4-9 9-9 9 6.34 9 9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.53 21.5c1.56 1.56 4.48 1.56 6.04 0 1.56-1.56 4.48-1.56 6.04 0 1.56 1.56 4.48 1.56 6.04 0" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold text-slate-900 mb-3">Asuransi Jiwa</h3>
+                <p class="text-slate-600 leading-relaxed mb-6">
+                    Lindungi masa depan keluarga dengan asuransi jiwa berjangka yang terjangkau dan manfaat perlindungan tinggi.
+                </p>
+                <a href="{{ route('home.service.detail', 'jiwa') }}" class="inline-flex items-center text-sm font-semibold text-slate-900">
                     Pelajari Lebih Lanjut
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />

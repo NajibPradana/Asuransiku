@@ -25,6 +25,7 @@ Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('h
 Route::get('post/list', [\App\Http\Controllers\PostController::class, 'list'])->name('post.list');
 Route::get('post/{slug}', [\App\Http\Controllers\PostController::class, 'show'])->name('post.show');
 Route::get('/services', [\App\Http\Controllers\HomeController::class, 'services'])->name('home.services');
+Route::get('/service/{category}', [\App\Http\Controllers\HomeController::class, 'serviceDetail'])->name('home.service.detail');
 
 Route::get('/blog', BlogList::class)->name('blog');
 
